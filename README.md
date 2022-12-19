@@ -1,5 +1,42 @@
 # RemoteWeb
 
+# Подробная инструкция по работе
+
+## Установить:
+* [Node.js + npm](https://nodejs.org/en/download/current/)
+* [git](https://git-scm.com/downloads)
+
+## Клонирование репозитория
+
+### HTTPS
+```sh
+git clone https://github.com/LittleFoxyUwU/RemoteWeb.git
+```
+### SSH
+```sh
+git clone git@github.com:LittleFoxyUwU/RemoteWeb.git
+```
+
+## Переходим в папку проекта
+```sh
+cd RemoteWeb/
+```
+
+## Переход на ветку devel
+```sh
+git checkout devel
+```
+
+## Восстановление модулей
+```sh
+npm install
+```
+
+## Запуск
+```sh
+npm run dev
+```
+---
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
@@ -20,10 +57,3 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 ## Customize configuration
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-
-## Подробная инструкция по работе
-
-```sh
-git clone 
-```
