@@ -32,6 +32,6 @@ import { RouterLink } from "vue-router";
 
     a:last-child {
         border-right: 1px solid main.$primary-color;
-    } 
+    }
 }
 </style>
