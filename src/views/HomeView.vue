@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import NavBarLayout from "@/layouts/NavBarLayout.vue";
 import TheWelcome from "../components/TheWelcome.vue";
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+    <NavBarLayout>
+        <TheWelcome />
+    </NavBarLayout>
 </template>
