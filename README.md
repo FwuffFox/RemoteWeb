@@ -2,7 +2,7 @@
 
 # Подробная инструкция по работе
 
-## Установить:
+## Установить!!:
 
 -   [Node.js + npm](https://nodejs.org/en/download/current/)
 -   [git](https://git-scm.com/downloads)
