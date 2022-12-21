@@ -10,7 +10,7 @@ import { RouterLink } from "vue-router";
 </template>
 
 <style scoped lang="scss">
-@use "../assets/main.scss" as main;
+@use "../assets/colors.scss" as colors;
 .nav-bar {
     width: 100%;
     font-size: 12px;
@@ -19,7 +19,7 @@ import { RouterLink } from "vue-router";
     a {
         display: inline-block;
         padding: 0 1rem;
-        border-left: 1px solid main.$primary-color;
+        border-left: 1px solid colors.$primary-color;
     }
 
     a.router-link-exact-active:hover {
@@ -31,7 +31,7 @@ import { RouterLink } from "vue-router";
     }
 
     a:last-child {
-        border-right: 1px solid main.$primary-color;
+        border-right: 1px solid colors.$primary-color;
     }
 }
 </style>
