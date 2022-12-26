@@ -1,4 +1,6 @@
-<script setup lang="ts" />
+<script setup lang="ts">
+import { RouterLink } from "vue-router";
+</script>
 
 <template>
     <div class="session">
@@ -17,17 +19,17 @@
             </svg>
         </div>
         <form action="" class="log-in" autocomplete="off">
-            <h4>We are <span>NUVA</span></h4>
-            <p>Welcome back! Log in to your account to view today's clients:</p>
+            <h4>Мы <span>Remote</span></h4>
+            <p>Добро пожаловать!</p>
             <div class="floating-label">
                 <input
-                    placeholder="Email"
+                    placeholder="Почта"
                     type="email"
                     name="email"
                     id="email"
                     autocomplete="off"
                 />
-                <label for="email">Email:</label>
+                <label for="email">Почта:</label>
                 <div class="icon">
                     <svg
                         enable-background="new 0 0 100 100"
@@ -47,13 +49,13 @@
             </div>
             <div class="floating-label">
                 <input
-                    placeholder="Password"
+                    placeholder="Пароль"
                     type="password"
                     name="password"
                     id="password"
                     autocomplete="off"
                 />
-                <label for="password">Password:</label>
+                <label for="password">Пароль:</label>
                 <div class="icon">
                     <svg
                         enable-background="new 0 0 24 24"
@@ -78,7 +80,10 @@
                     </svg>
                 </div>
             </div>
-            <button type="submit">Log in</button>
+            <button type="submit">Войти</button>
+            <RouterLink to="/auth/register">
+                <button>Регистрация</button>
+            </RouterLink>
             <a
                 href="https://codepen.io/elujambio/pen/yjwzGP"
                 class="discrete"
@@ -90,13 +95,15 @@
 </template>
 
 <style lang="scss">
+@use "../../assets/colors.scss" as colors;
+@use "../../assets/main.scss" as main;
 * {
     font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica,
         Arial, sans-serif;
     font-weight: 300;
     margin: 0;
 }
-$primary: red;
+$primary: colors.$primary-color;
 html,
 body {
     height: 100vh;
@@ -109,7 +116,7 @@ body {
 h4 {
     font-size: 24px;
     font-weight: 600;
-    color: #000;
+    color: black;
     opacity: 0.85;
 }
 label {
@@ -128,9 +135,9 @@ form {
     width: 300px;
     h4 {
         margin-bottom: 20px;
-        color: rgba(#000, 0.5);
+        color: rgba($primary, 0.5);
         span {
-            color: rgba(#000, 1);
+            color: rgba($primary, 1);
             font-weight: 700;
         }
     }
