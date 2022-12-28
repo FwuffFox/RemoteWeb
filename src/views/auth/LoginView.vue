@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import LoginForm from "@/components/auth/LoginForm.vue";
+import LoginWindow from "@/components/auth/LoginWindow.vue";
 import AuthLayout from "@/layouts/AuthLayout.vue";
 </script>
 
 <template>
     <AuthLayout>
-        <LoginForm></LoginForm>
+        <LoginWindow></LoginWindow>
     </AuthLayout>
 </template>

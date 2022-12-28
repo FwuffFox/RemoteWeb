@@ -81,15 +81,10 @@ import { RouterLink } from "vue-router";
                 </div>
             </div>
             <button type="submit">Войти</button>
-            <RouterLink to="/auth/register">
+            <RouterLink class="link-button" to="/auth/register">
                 <button>Регистрация</button>
             </RouterLink>
-            <a
-                href="https://codepen.io/elujambio/pen/yjwzGP"
-                class="discrete"
-                target="_blank"
-                >Basic version</a
-            >
+            <a href="" class="discrete" target="_blank">Помощь</a>
         </form>
     </div>
 </template>
@@ -113,6 +108,9 @@ body {
     align-items: flex-start;
     justify-content: flex-start;
 }
+.log-in {
+    align-items: center;
+}
 h4 {
     font-size: 24px;
     font-weight: 600;
@@ -127,7 +125,7 @@ label {
 }
 form {
     padding: 40px 30px;
-    background: #fefefe;
+    background: white;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -152,6 +150,11 @@ form {
         margin-bottom: 40px;
     }
 }
+.link-button {
+    &:hover {
+        background-color: transparent;
+    }
+}
 a.discrete {
     color: rgba(#000, 0.4);
     font-size: 14px;
@@ -166,7 +169,6 @@ a.discrete {
     }
 }
 button {
-    -webkit-appearance: none;
     width: auto;
     min-width: 100px;
     border-radius: 24px;
@@ -176,7 +178,6 @@ button {
     background-color: saturate($primary, 30%);
     color: #fff;
     font-size: 14px;
-    margin-left: auto;
     font-weight: 500;
     box-shadow: 0px 2px 6px -1px rgba(0, 0, 0, 0.13);
     border: none;
@@ -202,7 +203,6 @@ input {
     transition: all 0.3s linear;
     color: #000;
     font-weight: 400;
-    -webkit-appearance: none;
     &:focus {
         border-bottom: solid 1px $primary;
         outline: 0;
@@ -225,6 +225,29 @@ input {
         width: calc(100% - 44px);
         margin-left: auto;
         display: flex;
+
+        &:not(:placeholder-shown) {
+            padding: 28px 0px 12px 0px;
+        }
+
+        &:not(:placeholder-shown) + label {
+            transform: translateY(-10px);
+            opacity: 0.7;
+        }
+
+        &:valid:not(:placeholder-shown) + label + .icon {
+            svg {
+                opacity: 1;
+                path {
+                    fill: $primary;
+                }
+            }
+        }
+
+        &:not(:valid):not(:focus) + label + .icon {
+            animation-name: shake-shake;
+            animation-duration: 0.3s;
+        }
     }
     .icon {
         position: absolute;
@@ -243,25 +266,6 @@ input {
                 transition: all 0.3s ease;
             }
         }
-    }
-    input:not(:placeholder-shown) {
-        padding: 28px 0px 12px 0px;
-    }
-    input:not(:placeholder-shown) + label {
-        transform: translateY(-10px);
-        opacity: 0.7;
-    }
-    input:valid:not(:placeholder-shown) + label + .icon {
-        svg {
-            opacity: 1;
-            path {
-                fill: $primary;
-            }
-        }
-    }
-    input:not(:valid):not(:focus) + label + .icon {
-        animation-name: shake-shake;
-        animation-duration: 0.3s;
     }
 }
 $displacement: 3px;
@@ -300,7 +304,7 @@ $displacement: 3px;
     height: auto;
     min-height: 100%;
     position: relative;
-    background-image: url("https://images.pexels.com/photos/114979/pexels-photo-114979.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
+    background-image: url("https://img.freepik.com/free-vector/gradient-dynamic-lines-background_23-2149020285.jpg?w=826&t=st=1672227568~exp=1672228168~hmac=19b6f9f37f6d3f26229269851337ea8896db8ef92d727254f93f5e4bfb19d764");
     background-size: cover;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
