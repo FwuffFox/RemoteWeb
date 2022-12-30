@@ -1,20 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: "/",
             name: "home",
-            component: import("../views/HomeView.vue";),
-        },
-        {
-            path: "/about",
-            name: "about",
-            // route level code-splitting
-            // this generates a separate chunk (About.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import("../views/AboutView.vue"),
+            component: () => import("../views/MessengerView.vue"),
         },
         {
             path: "/auth/login",
@@ -22,10 +13,26 @@ const router = createRouter({
             component: () => import("../views/auth/LoginView.vue"),
         },
         {
-            path: "*", // Not existing paths
+            path: "/:pathMatch(.*)*", // Not existing paths
+            name: "NotFound",
             redirect: "/",
-        }
+        },
     ],
 });
+
+// TODO: Authorization
+
+// router.beforeEach((to, from, next) => {
+//     const publicPages = ["/auth/login", "/auth/register"];
+//     const authRequired = !publicPages.includes(to.path);
+//     const loggedIn = localStorage.getItem("user");
+
+//     if (authRequired && !loggedIn) {
+//         console.log("User is not logged in. Redirecting to /login");
+//         return next("/auth/login");
+//     }
+
+//     next();
+// });
 
 export default router;

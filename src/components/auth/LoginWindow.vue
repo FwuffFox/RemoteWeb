@@ -89,7 +89,7 @@ import { RouterLink } from "vue-router";
     </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use "../../assets/colors.scss" as colors;
 @use "../../assets/main.scss" as main;
 * {
