@@ -10,7 +10,10 @@ import "./assets/main.scss";
 const app = createApp(App);
 
 app.config.errorHandler = (err) => {};
-app.use(createPinia());
+
+const pinia = createPinia();
+app.use(pinia);
+
 app.use(router);
 
 app.mount("#app");

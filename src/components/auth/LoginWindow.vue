@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
+import { useAuthStore } from "@/stores/auth.store";
+import { storeToRefs } from "pinia";
+
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 </script>
 
 <template>

@@ -1,7 +1,3 @@
-<script setup lang="ts">
-// something
-</script>
-
 <template>
     <main class="vh-100">
         <div class="app-container">
@@ -19,7 +15,7 @@
 </template>
 
 <style lang="scss">
-.app-container { 
+.app-container {
     display: flex;
     height: 100vh;
     justify-content: space-between;
