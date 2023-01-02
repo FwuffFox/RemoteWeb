@@ -1,59 +1,45 @@
 <script setup lang="ts">
+import IconEmail from "../icons/IconEmail.vue";
+import IconLock from "../icons/IconLock.vue";
 import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
-import { storeToRefs } from "pinia";
+import * as Yup from "yup";
+import { Field, Form } from "vee-validate";
 
-const authStore = useAuthStore();
-const { user } = storeToRefs(authStore);
+const schema = Yup.object().shape({
+    username: Yup.string().required("Необходимо имя пользователя."),
+    password: Yup.string().required("Необходим пароль."),
+});
+
+async function onSubmit(values: any) {
+    const authStore = useAuthStore();
+    const { username, password } = values;
+    console.debug("logging in with values:", values);
+    await authStore.login(username, password);
+}
 </script>
 
 <template>
     <div class="session">
-        <div class="left">
-            <svg
-                enable-background="new 0 0 300 302.5"
-                version="1.1"
-                viewBox="0 0 300 302.5"
-                xml:space="preserve"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    class="st01"
-                    d="m126 302.2c-2.3 0.7-5.7 0.2-7.7-1.2l-105-71.6c-2-1.3-3.7-4.4-3.9-6.7l-9.4-126.7c-0.2-2.4 1.1-5.6 2.8-7.2l93.2-86.4c1.7-1.6 5.1-2.6 7.4-2.3l125.6 18.9c2.3 0.4 5.2 2.3 6.4 4.4l63.5 110.1c1.2 2 1.4 5.5 0.6 7.7l-46.4 118.3c-0.9 2.2-3.4 4.6-5.7 5.3l-121.4 37.4zm63.4-102.7c2.3-0.7 4.8-3.1 5.7-5.3l19.9-50.8c0.9-2.2 0.6-5.7-0.6-7.7l-27.3-47.3c-1.2-2-4.1-4-6.4-4.4l-53.9-8c-2.3-0.4-5.7 0.7-7.4 2.3l-40 37.1c-1.7 1.6-3 4.9-2.8 7.2l4.1 54.4c0.2 2.4 1.9 5.4 3.9 6.7l45.1 30.8c2 1.3 5.4 1.9 7.7 1.2l52-16.2z"
-                />
-            </svg>
-        </div>
-        <form action="" class="log-in" autocomplete="off">
+        <div class="left" />
+        <Form @submit="onSubmit" :validation-schema="schema" class="log-in">
             <h4>Мы <span>Remote</span></h4>
             <p>Добро пожаловать!</p>
             <div class="floating-label">
-                <input
-                    placeholder="Почта"
-                    type="email"
-                    name="email"
-                    id="email"
+                <Field
+                    placeholder="Имя Пользователя"
+                    type="username"
+                    name="username"
+                    id="username"
                     autocomplete="off"
                 />
-                <label for="email">Почта:</label>
+                <label for="username">Имя Пользователя:</label>
                 <div class="icon">
-                    <svg
-                        enable-background="new 0 0 100 100"
-                        version="1.1"
-                        viewBox="0 0 100 100"
-                        xml:space="preserve"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <g transform="translate(0 -952.36)">
-                            <path
-                                d="m17.5 977c-1.3 0-2.4 1.1-2.4 2.4v45.9c0 1.3 1.1 2.4 2.4 2.4h64.9c1.3 0 2.4-1.1 2.4-2.4v-45.9c0-1.3-1.1-2.4-2.4-2.4h-64.9zm2.4 4.8h60.2v1.2l-30.1 22-30.1-22v-1.2zm0 7l28.7 21c0.8 0.6 2 0.6 2.8 0l28.7-21v34.1h-60.2v-34.1z"
-                            />
-                        </g>
-                        <rect class="st0" width="100" height="100" />
-                    </svg>
+                    <IconEmail />
                 </div>
             </div>
             <div class="floating-label">
-                <input
+                <Field
                     placeholder="Пароль"
                     type="password"
                     name="password"
@@ -62,27 +48,7 @@ const { user } = storeToRefs(authStore);
                 />
                 <label for="password">Пароль:</label>
                 <div class="icon">
-                    <svg
-                        enable-background="new 0 0 24 24"
-                        version="1.1"
-                        viewBox="0 0 24 24"
-                        xml:space="preserve"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <rect class="st0" width="24" height="24" />
-                        <path
-                            class="st1"
-                            d="M19,21H5V9h14V21z M6,20h12V10H6V20z"
-                        />
-                        <path
-                            class="st1"
-                            d="M16.5,10h-1V7c0-1.9-1.6-3.5-3.5-3.5S8.5,5.1,8.5,7v3h-1V7c0-2.5,2-4.5,4.5-4.5s4.5,2,4.5,4.5V10z"
-                        />
-                        <path
-                            class="st1"
-                            d="m12 16.5c-0.8 0-1.5-0.7-1.5-1.5s0.7-1.5 1.5-1.5 1.5 0.7 1.5 1.5-0.7 1.5-1.5 1.5zm0-2c-0.3 0-0.5 0.2-0.5 0.5s0.2 0.5 0.5 0.5 0.5-0.2 0.5-0.5-0.2-0.5-0.5-0.5z"
-                        />
-                    </svg>
+                    <IconLock />
                 </div>
             </div>
             <button type="submit">Войти</button>
@@ -90,7 +56,7 @@ const { user } = storeToRefs(authStore);
                 <button>Регистрация</button>
             </RouterLink>
             <a href="" class="discrete" target="_blank">Помощь</a>
-        </form>
+        </Form>
     </div>
 </template>
 
@@ -243,6 +209,7 @@ input {
         &:valid:not(:placeholder-shown) + label + .icon {
             svg {
                 opacity: 1;
+                fill: $primary;
                 path {
                     fill: $primary;
                 }
@@ -318,11 +285,5 @@ $displacement: 3px;
         width: auto;
         margin: 20px;
     }
-}
-.st0 {
-    fill: none;
-}
-.st1 {
-    fill: #010101;
 }
 </style>

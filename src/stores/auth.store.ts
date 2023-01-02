@@ -2,7 +2,7 @@ import router from "@/router";
 import { defineStore } from "pinia";
 import { fetchWrapper } from "@/services/fetch-wrapper";
 
-const BASE_URL = "localhost:5001";
+const BASE_URL = "https://localhost:5173/api";
 
 export const useAuthStore = defineStore({
     id: "Auth",
@@ -12,13 +12,15 @@ export const useAuthStore = defineStore({
     }),
     actions: {
         async login(username: string, password: string) {
+            console.debug("called");
             const user = await fetchWrapper.post<User>(
-                BASE_URL + "/auth/login",
+                BASE_URL + "/api/auth/login",
                 {
                     username: username,
                     password: password,
                 }
             );
+
             this.user = user;
             localStorage.setItem("user", JSON.stringify(user));
             router.push(this.returnUrl || "/");

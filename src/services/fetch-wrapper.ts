@@ -17,6 +17,7 @@ async function post<ReturnType = any>(
             },
         })
         .then((response) => {
+            console.debug(response);
             return response.data;
         });
 }
