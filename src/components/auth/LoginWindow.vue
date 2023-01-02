@@ -5,6 +5,13 @@ import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import * as Yup from "yup";
 import { Field, Form } from "vee-validate";
+import router from "@/router";
+
+const authStore = useAuthStore();
+
+if (authStore.user) {
+    router.push("/");
+}
 
 const schema = Yup.object().shape({
     username: Yup.string().required("Необходимо имя пользователя."),
@@ -12,7 +19,6 @@ const schema = Yup.object().shape({
 });
 
 async function onSubmit(values: any) {
-    const authStore = useAuthStore();
     const { username, password } = values;
     console.debug("logging in with values:", values);
     await authStore.login(username, password);

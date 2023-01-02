@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth.store';
+import { storeToRefs } from 'pinia';
+
+const auth = useAuthStore();
+const user = storeToRefs(auth);
+</script>
+
 <template>
     <main class="vh-100">
         <div class="app-container">
@@ -6,7 +14,7 @@
                 <div class="room-header"></div>
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
-                        <li></li>
+                        <li>{{ user.user }}</li>
                     </div>
                 </div>
             </div>
@@ -15,6 +23,9 @@
 </template>
 
 <style lang="scss">
+body {
+    display: block;
+}
 .app-container {
     display: flex;
     height: 100vh;
