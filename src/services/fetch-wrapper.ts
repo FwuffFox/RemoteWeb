@@ -52,7 +52,11 @@ function authHeader(): string {
 
 function catchAxiosError(error: any) {
     if (axios.isAxiosError(error)) {
-        console.log(error);
-        alertStore.error(error.message);
+        const { user, logout } = useAuthStore();
+        if (["401", "403"].includes(error.code!) && user) {
+            logout();
+        }
+        console.log(error.response!);
+        alertStore.error(error.response?.data.errors || error.response?.data);
     }
 }
