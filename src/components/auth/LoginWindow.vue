@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import IconEmail from "../icons/IconEmail.vue";
 import IconLock from "../icons/IconLock.vue";
+
 import { RouterLink } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import * as Yup from "yup";
 import { Field, Form } from "vee-validate";
 import router from "@/router";
+import { useAlertStore } from "@/stores/alert.store";
+import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
+const alertStore = useAlertStore();
+const { alert } = storeToRefs(alertStore);
 
 if (authStore.user) {
     router.push("/");
@@ -19,50 +24,63 @@ const schema = Yup.object().shape({
 });
 
 async function onSubmit(values: any) {
+    alertStore.clear();
     const { username, password } = values;
     console.debug("logging in with values:", values);
     await authStore.login(username, password);
+}
+
+async function invalidSubmit(values: any) {
+    alertStore.clear();
 }
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
-        <Form @submit="onSubmit" :validation-schema="schema" class="log-in">
-            <h4>Мы <span>Remote</span></h4>
-            <p>Добро пожаловать!</p>
-            <div class="floating-label">
-                <Field
-                    placeholder="Имя Пользователя"
-                    type="username"
-                    name="username"
-                    id="username"
-                    autocomplete="off"
-                />
-                <label for="username">Имя Пользователя:</label>
-                <div class="icon">
-                    <IconEmail />
+        <div class="login-container">
+            <Form
+                @submit="onSubmit"
+                @invalid-submit="invalidSubmit"
+                :validation-schema="schema"
+                class="log-in"
+            >
+                <h4>Мы <span>Remote</span></h4>
+                <p>Добро пожаловать!</p>
+                <h2 style="color: red">{{ alert?.message }}</h2>
+                <div class="floating-label">
+                    <Field
+                        placeholder="Имя Пользователя"
+                        type="username"
+                        name="username"
+                        id="username"
+                        autocomplete="off"
+                    />
+                    <label for="username">Имя Пользователя:</label>
+                    <div class="icon">
+                        <IconEmail />
+                    </div>
                 </div>
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Пароль"
-                    type="password"
-                    name="password"
-                    id="password"
-                    autocomplete="off"
-                />
-                <label for="password">Пароль:</label>
-                <div class="icon">
-                    <IconLock />
+                <div class="floating-label">
+                    <Field
+                        placeholder="Пароль"
+                        type="password"
+                        name="password"
+                        id="password"
+                        autocomplete="off"
+                    />
+                    <label for="password">Пароль:</label>
+                    <div class="icon">
+                        <IconLock />
+                    </div>
                 </div>
-            </div>
-            <button type="submit">Войти</button>
-            <RouterLink class="link-button" to="/auth/register">
-                <button>Регистрация</button>
-            </RouterLink>
-            <a href="" class="discrete" target="_blank">Помощь</a>
-        </Form>
+                <button type="submit">Войти</button>
+                <RouterLink class="link-button" to="/auth/register">
+                    <button>Регистрация</button>
+                </RouterLink>
+                <a href="" class="discrete" target="_blank">Помощь</a>
+            </Form>
+        </div>
     </div>
 </template>
 
@@ -87,6 +105,7 @@ body {
 }
 .log-in {
     align-items: center;
+    align-self: center;
 }
 h4 {
     font-size: 24px;
@@ -271,15 +290,14 @@ $displacement: 3px;
     display: flex;
     flex-direction: row;
     width: auto;
-    height: auto;
+    height: 100vh !important;
     margin: auto auto;
     background: #ffffff;
     border-radius: 4px;
     box-shadow: 0px 2px 6px -1px rgba(0, 0, 0, 0.12);
 }
 .left {
-    width: 220px;
-    height: auto;
+    width: 50%;
     min-height: 100%;
     position: relative;
     background-image: url("https://img.freepik.com/free-vector/gradient-dynamic-lines-background_23-2149020285.jpg?w=826&t=st=1672227568~exp=1672228168~hmac=19b6f9f37f6d3f26229269851337ea8896db8ef92d727254f93f5e4bfb19d764");
@@ -291,5 +309,11 @@ $displacement: 3px;
         width: auto;
         margin: 20px;
     }
+}
+
+.login-container {
+    display: flex;
+    width: 50%;
+    justify-content: center;
 }
 </style>

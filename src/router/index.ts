@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-const router = createRouter({
+export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
@@ -22,17 +22,17 @@ const router = createRouter({
 
 // TODO: Authorization
 
-// router.beforeEach((to, from, next) => {
-//     const publicPages = ["/auth/login", "/auth/register"];
-//     const authRequired = !publicPages.includes(to.path);
-//     const loggedIn = localStorage.getItem("user");
+router.beforeEach((to, from, next) => {
+    const publicPages = ["/auth/login", "/auth/register"];
+    const authRequired = !publicPages.includes(to.path);
+    const loggedIn = localStorage.getItem("user");
 
-//     if (authRequired && !loggedIn) {
-//         console.log("User is not logged in. Redirecting to /login");
-//         return next("/auth/login");
-//     }
+    if (authRequired && !loggedIn) {
+        console.log("User is not logged in. Redirecting to /auth/login");
+        return next("/auth/login");
+    }
 
-//     next();
-// });
+    next();
+});
 
 export default router;

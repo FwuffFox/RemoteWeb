@@ -1,29 +1,34 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth.store';
-import { storeToRefs } from 'pinia';
+import { useAuthStore } from "@/stores/auth.store";
+import { storeToRefs } from "pinia";
 
 const auth = useAuthStore();
 const user = storeToRefs(auth);
+
+function logout() {
+    auth.logout();
+}
 </script>
 
 <template>
-    <main class="vh-100">
-        <div class="app-container">
+    <div class="page">
+        <main class="app-container">
             <div id="sidebar"></div>
             <div id="main-content">
                 <div class="room-header"></div>
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
-                        <li>{{ user.user }}</li>
+                        <li style="color: black">{{ user.user }}</li>
                     </div>
+                    <button v-on:click="logout">Logout</button>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 </template>
 
 <style lang="scss">
-body {
+.page {
     display: block;
 }
 .app-container {

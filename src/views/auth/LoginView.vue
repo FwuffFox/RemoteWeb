@@ -5,6 +5,6 @@ import AuthLayout from "@/layouts/AuthLayout.vue";
 
 <template>
     <AuthLayout>
-        <LoginWindow></LoginWindow>
+        <LoginWindow />
     </AuthLayout>
 </template>

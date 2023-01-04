@@ -1,12 +1,8 @@
 <template>
-    <main class="container">
+    <div class="auth-layout">
         <slot />
-    </main>
+    </div>
 </template>
 
 <style>
-body {
-    display: flex;
-    place-items: center;
-}
 </style>
