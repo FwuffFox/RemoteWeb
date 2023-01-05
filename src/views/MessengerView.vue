@@ -5,17 +5,13 @@ import { fetchWrapper } from "@/services/fetch-wrapper";
 import { ref } from "vue";
 
 const auth = useAuthStore();
-const user = storeToRefs(auth);
+const { user } = storeToRefs(auth);
 
 function logout() {
     auth.logout();
 }
 const obj = {
-    messages: [
-        "first",
-        "second",
-        "third"
-    ]
+    messages: ["first", "second", "third"],
 };
 const messageList = ref(obj);
 </script>
@@ -29,7 +25,10 @@ const messageList = ref(obj);
                 </div>
                 <div class="profile">
                     <div class="d-flex align-items-center flex-grow-1">
-                        
+                        <v-avatar class="me-2" size="50" color="blue">
+                            <span>CJ</span>
+                        </v-avatar>
+                        <a>{{ user.fullName }}</a>
                     </div>
                 </div>
             </div>
@@ -39,7 +38,7 @@ const messageList = ref(obj);
                 </div>
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
-                        <li style="color: black">{{ user.user }}</li>
+                        <li style="color: black">{{ user }}</li>
                     </div>
                     <button v-on:click="logout">Logout</button>
                 </div>
@@ -111,6 +110,14 @@ const messageList = ref(obj);
         padding: 10px;
         background: rgba(0, 0, 0, 0.1);
         margin-top: auto;
+
+        a {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
     }
 }
 
@@ -127,8 +134,6 @@ const messageList = ref(obj);
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
-
-
     }
 }
 </style>
