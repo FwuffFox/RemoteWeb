@@ -43,10 +43,9 @@ async function get<GetType>(url: string): Promise<GetType | null> {
 }
 
 function authHeader(): string {
-    const { user } = useAuthStore();
-    const isLoggedIn = !!user?.token;
-    if (isLoggedIn) {
-        return `Bearer ${user.token}`;
+    const token = localStorage.getItem("token");
+    if (token != null) {
+        return `Bearer ${token}`;
     } else return "";
 }
 

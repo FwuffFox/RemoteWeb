@@ -12,14 +12,19 @@ export const useAuthStore = defineStore({
     }),
     actions: {
         async login(username: string, password: string) {
-            const user = await fetchWrapper.post<string>(
-                BASE_URL + "/api/auth/login",
+            const token = await fetchWrapper.post<string>(
+                BASE_URL + "/auth/login",
                 {
                     username: username,
                     password: password,
                 }
             );
-            if (user == null) return;
+            if (token == null) return;
+            localStorage.setItem("username", username);
+            localStorage.setItem("token", token);
+            const user = await fetchWrapper.get<any>(
+                BASE_URL + `/user?username=${username}`
+            );
             this.user = user;
             localStorage.setItem("user", JSON.stringify(user));
             router.push(this.returnUrl || "/");

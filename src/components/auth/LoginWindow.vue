@@ -47,7 +47,9 @@ async function invalidSubmit(values: any) {
             >
                 <h4>Мы <span>Remote</span></h4>
                 <p>Добро пожаловать!</p>
-                <h2 style="color: red">{{ alert?.message }}</h2>
+                <v-alert v-if="alert" type="error">{{
+                    alert?.message
+                }}</v-alert>
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"

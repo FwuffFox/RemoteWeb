@@ -1,9 +1,8 @@
 @use "./colors.scss" as colors;
 @use "./base.scss" as base;
+@import "~bootstrap/scss/bootstrap";
 
 #app {
-    max-width: 1280px;
-    margin: 0 auto;
     font-weight: normal;
 }
 

@@ -6,12 +6,16 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 
 import basicSsl from "@vitejs/plugin-basic-ssl";
 
+import path from "path";
+import vuetify from "vite-plugin-vuetify";
+
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue(), vueJsx(), basicSsl()],
+    plugins: [vue(), vueJsx(), basicSsl(), vuetify({ autoImport: true })],
     resolve: {
         alias: {
             "@": fileURLToPath(new URL("./src", import.meta.url)),
+            "~bootstrap": path.resolve(__dirname, "node_modules/bootstrap"),
         },
     },
     server: {
