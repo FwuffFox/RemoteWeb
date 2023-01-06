@@ -1,3 +1,4 @@
+import router from "@/router";
 import { useAlertStore } from "@/stores/alert.store";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
@@ -51,9 +52,12 @@ function authHeader(): string {
 
 function catchAxiosError(error: any) {
     if (axios.isAxiosError(error)) {
+        console.error(error);
         const { user, logout } = useAuthStore();
-        if (["401", "403"].includes(error.code!) && user) {
+        if ([401, 403].includes(error.response?.status!) && user) {
             logout();
+        } else if (error.response?.status! == 500) {
+            router.push("/error/500");
         }
         console.log(error.response!);
         alertStore.error(error.response?.data.errors || error.response?.data);

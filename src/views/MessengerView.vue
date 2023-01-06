@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
-import { fetchWrapper } from "@/services/fetch-wrapper";
+import LogoutButton from "@/components/LogoutButton.vue";
 import { ref } from "vue";
 
 const auth = useAuthStore();
 const { user } = storeToRefs(auth);
 
-function logout() {
-    auth.logout();
+interface Message {
+    body: string;
+    sender: string;
 }
-const obj = {
-    messages: ["first", "second", "third"],
-};
-const messageList = ref(obj);
+const messages: Message[] = [
+    { body: "AAAAAA!", sender: "@anon" },
+    { body: "BBBBBB!", sender: "@anon" },
+    { body: "AAAAA!!!", sender: "@anon" },
+];
+const messagesRef = ref(messages);
+
+const input = ref("");
+
+function sendMessage() {
+    messages.push({
+        body: input.value,
+        sender: user.value.username,
+    } as Message);
+    input.value = "";
+    console.log(messages);
+}
 </script>
 
 <template>
@@ -28,8 +42,9 @@ const messageList = ref(obj);
                         <v-avatar class="me-2" size="50" color="blue">
                             <span>CJ</span>
                         </v-avatar>
-                        <a>{{ user.fullName }}</a>
+                        <a>{{ (user.fullName as string).split(" ")[1] }}</a>
                     </div>
+                    <LogoutButton />
                 </div>
             </div>
             <div id="main-content">
@@ -38,9 +53,43 @@ const messageList = ref(obj);
                 </div>
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
-                        <li style="color: black">{{ user }}</li>
+                        <li v-for="message in messagesRef" :key="message.body">
+                            {{ message }}
+                        </li>
                     </div>
-                    <button v-on:click="logout">Logout</button>
+                </div>
+                <div class="message-input-container">
+                    <input
+                        id="message-input"
+                        type="text"
+                        placeholder="What's on your mind?"
+                        v-model="input"
+                    />
+                    <div class="actions d-flex align-items-center">
+                        <a
+                            role="button"
+                            id="btn-send-message"
+                            @click="sendMessage"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="feather feather-send"
+                            >
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon
+                                    points="22 2 15 22 11 13 2 9 22 2"
+                                ></polygon>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </main>
@@ -134,6 +183,29 @@ const messageList = ref(obj);
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
+    }
+
+    .message-input-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f5f5f5;
+        margin: 20px;
+        padding: 5px;
+        border-radius: 10px;
+        position: relative;
+
+        input {
+            width: 100%;
+            border: none;
+            background: inherit;
+            outline: 0;
+            padding: 10px 20px;
+        }
+
+        .actions {
+            padding: 0 10px;
+        }
     }
 }
 </style>
