@@ -4,14 +4,13 @@ import { storeToRefs } from "pinia";
 import LogoutButton from "@/components/LogoutButton.vue";
 import { ref } from "vue";
 
+import type { IMessage } from "@/models/IMessage";
+import TextMessage from "@/components/messenger/TextMessage.vue";
+
 const auth = useAuthStore();
 const { user } = storeToRefs(auth);
 
-interface Message {
-    body: string;
-    sender: string;
-}
-const messages: Message[] = [
+const messages: IMessage[] = [
     { body: "AAAAAA!", sender: "@anon" },
     { body: "BBBBBB!", sender: "@anon" },
     { body: "AAAAA!!!", sender: "@anon" },
@@ -24,7 +23,7 @@ function sendMessage() {
     messages.push({
         body: input.value,
         sender: user.value.username,
-    } as Message);
+    } as IMessage);
     input.value = "";
     console.log(messages);
 }
@@ -54,7 +53,7 @@ function sendMessage() {
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
                         <li v-for="message in messagesRef" :key="message.body">
-                            {{ message }}
+                            <TextMessage :message="message" />
                         </li>
                     </div>
                 </div>
@@ -64,6 +63,7 @@ function sendMessage() {
                         type="text"
                         placeholder="What's on your mind?"
                         v-model="input"
+                        @keyup.enter="sendMessage"
                     />
                     <div class="actions d-flex align-items-center">
                         <a
@@ -128,6 +128,11 @@ function sendMessage() {
         overflow-y: auto;
         flex-grow: 1;
         padding: 10px;
+
+        // We add those two lines to make messenger window always display last sent message
+        // (Autoscroll?)
+        display: flex;
+        flex-direction: column-reverse;
     }
 }
 
