@@ -2,7 +2,7 @@ import router from "@/router";
 import { defineStore } from "pinia";
 import { fetchWrapper } from "@/services/fetch-wrapper";
 
-const BASE_URL = "https://localhost:5173/api";
+const BASE_URL = `${window.location.origin}/api`;
 
 export const useAuthStore = defineStore({
     id: "Auth",

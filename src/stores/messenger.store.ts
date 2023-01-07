@@ -2,9 +2,13 @@ import { defineStore } from "pinia";
 import type { IMessage } from "@/models/IMessage";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
+import { fetchWrapper } from "@/services/fetch-wrapper";
 
 const authStore = useAuthStore();
 const { user } = authStore;
+
+const BASE_URL = `${window.location.origin}/api`;
+
 export const useMessengerStore = defineStore({
     id: "messenger",
     state: () => ({
@@ -19,7 +23,17 @@ export const useMessengerStore = defineStore({
         },
     },
     actions: {
-        connect() {
+        async connect() {
+            const messages = await fetchWrapper.get<any[]>(
+                BASE_URL + "messages/general/100"
+            );
+            messages?.forEach(element => {
+                const message: IMessage = {
+                    body: element.body,
+                    sender: element.sender.username,
+                };
+                this.messages.push(message);
+            });
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl("/api/general_chat", {
                     accessTokenFactory: () => authStore.token!,
@@ -37,6 +51,10 @@ export const useMessengerStore = defineStore({
                     this.messages.push(message);
                 }
             );
+
+            this.connection.onclose(() => {
+                this.messages = [];
+            });
 
             this.connection.start();
             console.log("Connected");
