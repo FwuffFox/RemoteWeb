@@ -7,34 +7,34 @@ const BASE_URL = "https://localhost:5173/api";
 export const useAuthStore = defineStore({
     id: "Auth",
     state: () => ({
-        user: JSON.parse(localStorage.getItem("user") as string),
+        token: localStorage.getItem("token"),
+        user: JSON.parse(localStorage.getItem("user") as string) as any | null,
         returnUrl: null,
     }),
     actions: {
         async login(username: string, password: string) {
-            const token = await fetchWrapper.post<string>(
+            this.token = await fetchWrapper.post<string>(
                 BASE_URL + "/auth/login",
                 {
                     username: username,
                     password: password,
                 }
             );
-            if (token == null) return;
+            if (this.token == null) return;
             localStorage.setItem("username", username);
-            localStorage.setItem("token", token);
-            const user = await fetchWrapper.get<any>(
+            localStorage.setItem("token", this.token);
+            this.user = await fetchWrapper.get<any>(
                 BASE_URL + `/user?username=${username}`
             );
-            this.user = user;
-            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("user", JSON.stringify(this.user));
             router.push(this.returnUrl || "/");
         },
         logout() {
-            this.user = null;
             localStorage.removeItem("user");
             localStorage.removeItem("token");
             localStorage.removeItem("username");
             router.push("/auth/login");
+            this.$reset();
         },
     },
 });

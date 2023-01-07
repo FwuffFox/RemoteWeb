@@ -2,30 +2,27 @@
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
 import LogoutButton from "@/components/LogoutButton.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
-import type { IMessage } from "@/models/IMessage";
 import TextMessage from "@/components/messenger/TextMessage.vue";
+import { useMessengerStore } from "@/stores/messenger.store";
 
 const auth = useAuthStore();
 const { user } = storeToRefs(auth);
 
-const messages: IMessage[] = [
-    { body: "AAAAAA!", sender: "@anon" },
-    { body: "BBBBBB!", sender: "@anon" },
-    { body: "AAAAA!!!", sender: "@anon" },
-];
-const messagesRef = ref(messages);
+const messengerStore = useMessengerStore();
+const { messages } = storeToRefs(messengerStore);
+
+onMounted(() => {
+    messengerStore.connect();
+});
 
 const input = ref("");
 
 function sendMessage() {
-    messages.push({
-        body: input.value,
-        sender: user.value.username,
-    } as IMessage);
+    if (!messengerStore.isConnected) return;
+    messengerStore.send(input.value);
     input.value = "";
-    console.log(messages);
 }
 </script>
 
@@ -41,7 +38,9 @@ function sendMessage() {
                         <v-avatar class="me-2" size="50" color="blue">
                             <span>CJ</span>
                         </v-avatar>
-                        <a>{{ (user.fullName as string).split(" ")[1] }}</a>
+                        <a v-if:="user">{{
+                            (user.fullName as string).split(" ")[1]
+                        }}</a>
                     </div>
                     <LogoutButton />
                 </div>
@@ -52,7 +51,7 @@ function sendMessage() {
                 </div>
                 <div class="messages-container position-relative">
                     <div id="messages-list" class="list-unstyled">
-                        <li v-for="message in messagesRef" :key="message.body">
+                        <li v-for="message in messages" :key="message.body">
                             <TextMessage :message="message" />
                         </li>
                     </div>
