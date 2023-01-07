@@ -60,7 +60,7 @@ function sendMessage() {
                     <input
                         id="message-input"
                         type="text"
-                        placeholder="What's on your mind?"
+                        placeholder="Сообщение"
                         v-model="input"
                         @keyup.enter="sendMessage"
                     />
@@ -210,6 +210,12 @@ function sendMessage() {
         .actions {
             padding: 0 10px;
         }
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #sidebar {
+        display: none;
     }
 }
 </style>

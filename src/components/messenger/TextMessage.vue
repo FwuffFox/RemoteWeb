@@ -36,6 +36,10 @@ const { user } = useAuthStore();
         border-radius: 10px;
         max-width: 60%;
 
+        .content {
+            word-wrap: break-word;
+        }
+
         .author {
             font-size: 14px;
             font-weight: 500;
