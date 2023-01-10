@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IMessage } from "@/models/IMessage";
 import { useAuthStore } from "@/stores/auth.store";
+
 defineProps<{
     message: IMessage;
 }>();

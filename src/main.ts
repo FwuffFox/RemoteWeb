@@ -16,10 +16,8 @@ import { createPinia } from "pinia";
 const pinia = createPinia();
 app.use(pinia);
 
-
 // Load Vuetify
 import vuetify from "./plugins/vuetify";
-
 app.use(vuetify);
 
 // Use routing
