@@ -12,12 +12,12 @@ const { user } = useAuthStore();
 <template>
     <div
         class="message-item"
-        :class="{ ismine: user.username == message.sender }"
+        :class="{ ismine: user?.username == message.sender.username }"
     >
-        <v-avatar> {{ message.sender[1].toUpperCase() }}</v-avatar>
+        <v-avatar> {{ message.sender.username[0].toUpperCase() }}</v-avatar>
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
-                <span class="author">{{ message.sender }}</span>
+                <span class="author">{{ message.sender.username }}</span>
             </div>
             <div class="content">{{ message.body }}</div>
         </div>

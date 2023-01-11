@@ -24,16 +24,10 @@ export const useMessengerStore = defineStore({
     },
     actions: {
         async connect() {
-            const messages = await fetchWrapper.get<any[]>(
+            const authStore = useAuthStore();
+            this.messages = (await fetchWrapper.get<IMessage[]>(
                 BASE_URL + "messages/general/100"
-            );
-            messages?.forEach(element => {
-                const message: IMessage = {
-                    body: element.body,
-                    sender: element.sender.username,
-                };
-                this.messages.push(message);
-            });
+            )) as IMessage[];
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl("/api/general_chat", {
                     accessTokenFactory: () => authStore.token!,
@@ -41,30 +35,31 @@ export const useMessengerStore = defineStore({
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-            this.connection.on(
-                "SendMessage",
-                (sender: string, body: string) => {
-                    const message: IMessage = {
-                        body: body,
-                        sender: sender,
-                    };
-                    this.messages.push(message);
-                }
-            );
+            this.connection.on("ReceiveMessage", (message: IMessage) => {
+                this.messages.push(message);
+            });
 
             this.connection.onclose(() => {
                 this.messages = [];
             });
 
-            this.connection.start();
+            await this.connection.start();
             console.log("Connected");
         },
-        send(message: string) {
+        async send(message: string) {
             try {
-                this.connection?.invoke("SendMessage", message, user.username);
+                await this.connection?.invoke(
+                    "SendMessage",
+                    message,
+                    user?.username
+                );
             } catch (error) {
                 console.error(error);
             }
+        },
+        async disconnect() {
+            await this.connection?.stop();
+            console.log("SignalR disconnected");
         },
     },
 });

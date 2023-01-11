@@ -67,7 +67,7 @@ function authHeader(): string {
 }
 
 /**
- * @param error Error that is caused during api request
+ * @param error Error that is caused during api request.
  */
 function catchAxiosError(error: any) {
     if (axios.isAxiosError(error)) {

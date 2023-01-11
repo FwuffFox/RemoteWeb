@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
 import LogoutButton from "@/components/LogoutButton.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
@@ -17,18 +17,28 @@ onMounted(() => {
     messengerStore.connect();
 });
 
+onUnmounted(() => {
+    messengerStore.disconnect();
+});
+
 const input = ref("");
 
-function sendMessage() {
+async function sendMessage() {
     if (!messengerStore.isConnected) return;
-    messengerStore.send(input.value);
+    await messengerStore.send(input.value);
     input.value = "";
 }
+
+var isLoading = computed(() => !messengerStore.isConnected);
 </script>
 
 <template>
     <div class="page">
         <main class="app-container">
+            <!-- TODO: Center the progress -->
+            <v-dialog persistent v-model="isLoading">
+                <v-progress-circular indeterminate color="orange" :size="100" :width="12"/>
+            </v-dialog>
             <div id="sidebar">
                 <div class="header">
                     <h5>Чаты</h5>
@@ -38,9 +48,7 @@ function sendMessage() {
                         <v-avatar class="me-2" size="50" color="blue">
                             <span>CJ</span>
                         </v-avatar>
-                        <a v-if:="user">{{
-                            (user.fullName as string).split(" ")[1]
-                        }}</a>
+                        <a v-if:="user">{{ user.fullName.split(" ")[1] }}</a>
                     </div>
                     <LogoutButton />
                 </div>
