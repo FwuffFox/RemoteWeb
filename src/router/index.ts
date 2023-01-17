@@ -14,6 +14,11 @@ export const router = createRouter({
             component: () => import("@/views/auth/LoginView.vue"),
         },
         {
+            path: "/auth/register",
+            name: "register",
+            component: () => import("@/views/auth/RegisterView.vue"),
+        },
+        {
             path: "/error/500",
             name: "internal_server_error",
             component: () => import("@/views/error_pages/Error500View.vue"),
