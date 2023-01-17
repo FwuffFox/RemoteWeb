@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import type { IMessage } from "@/models/IMessage";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
-import { fetchWrapper } from "@/services/fetch-wrapper";
 
 const authStore = useAuthStore();
 const { user } = authStore;
@@ -25,26 +24,36 @@ export const useMessengerStore = defineStore({
     actions: {
         async connect() {
             const authStore = useAuthStore();
-            this.messages = (await fetchWrapper.get<IMessage[]>(
-                BASE_URL + "messages/general/100"
-            )) as IMessage[];
             this.connection = new signalR.HubConnectionBuilder()
-                .withUrl("/api/general_chat", {
+                .withUrl("/api/hubs/general_chat", {
                     accessTokenFactory: () => authStore.token!,
                 })
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-            this.connection.on("ReceiveMessage", (message: IMessage) => {
+            this.connection.on("OnReceiveMessage", (message: IMessage) => {
                 this.messages.push(message);
             });
-
-            this.connection.onclose(() => {
-                this.messages = [];
+            
+            this.connection.on("OnConnection", (messages: IMessage[]) => {
+                this.messages = messages;
+            });
+            
+            const start = async () => {
+                try {
+                    await this.connection?.start();
+                    console.log("SignalR connected");
+                } catch (err) {
+                    console.error(err);
+                    console.log("Trying to reconnect...");
+                    setTimeout(start, 5000);
+                }
+            }
+            this.connection.onclose(async () => {
+                await start()
             });
 
-            await this.connection.start();
-            console.log("Connected");
+            await start();
         },
         async send(message: string) {
             try {

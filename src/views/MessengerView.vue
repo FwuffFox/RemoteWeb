@@ -37,7 +37,7 @@ var isLoading = computed(() => !messengerStore.isConnected);
         <main class="app-container">
             <!-- TODO: Center the progress -->
             <v-dialog persistent v-model="isLoading">
-                <v-progress-circular indeterminate color="orange" :size="100" :width="12"/>
+                <v-progress-circular indeterminate color="orange" :size="120" :width="12"/>
             </v-dialog>
             <div id="sidebar">
                 <div class="header">
