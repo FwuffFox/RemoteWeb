@@ -58,11 +58,11 @@ var isLoading = computed(() => !messengerStore.isConnected);
                     <h5>Название чата</h5>
                 </div>
                 <div class="messages-container position-relative">
-                    <div id="messages-list" class="list-unstyled">
+                    <ul id="messages-list" class="list-unstyled">
                         <li v-for="message in messages" :key="message.body">
                             <TextMessage :message="message" />
                         </li>
-                    </div>
+                    </ul>
                 </div>
                 <div class="message-input-container">
                     <input

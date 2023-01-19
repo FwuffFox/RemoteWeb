@@ -1,5 +1,6 @@
 import { useAlertStore } from "@/stores/alert.store";
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/auth.store";
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -31,16 +32,13 @@ export const router = createRouter({
     ],
 });
 
-// TODO: Authorization
-
 router.beforeEach((to, from, next) => {
-    const alertStore = useAlertStore();
-    alertStore.clear();
-    const publicPages = ["/auth/login", "/auth/register", "/error/500"];
-    const authRequired = !publicPages.includes(to.path);
-    const loggedIn = localStorage.getItem("token");
+    useAlertStore().clear();
+    const isPublic =
+        to.path.startsWith("/auth") || to.path.startsWith("/error");
+    const loggedIn = useAuthStore().isLoggedIn;
 
-    if (authRequired && !loggedIn) {
+    if (!isPublic && !loggedIn) {
         console.log("User is not logged in. Redirecting to /auth/login");
         return next("/auth/login");
     }

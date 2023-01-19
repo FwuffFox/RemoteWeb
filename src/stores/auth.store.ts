@@ -14,6 +14,11 @@ export const useAuthStore = defineStore({
         ) as IUser | null,
         returnUrl: null,
     }),
+    getters: {
+        isLoggedIn: (store) => {
+            return store.token != null || store.user != null;
+        },
+    },
     actions: {
         async login(username: string, password: string) {
             this.token = await fetchWrapper.post<string>(
@@ -31,10 +36,11 @@ export const useAuthStore = defineStore({
                 BASE_URL + `/user?username=${username}`
             );
             localStorage.setItem("user", JSON.stringify(this.user));
-            router.push(this.returnUrl || "/");
+            await router.push(this.returnUrl || "/");
+            this.returnUrl = null;
         },
-        logout() {
-            router.push("/auth/login");
+        async logout() {
+            await router.push("/auth/login");
             localStorage.removeItem("user");
             localStorage.removeItem("token");
             localStorage.removeItem("username");

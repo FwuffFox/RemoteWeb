@@ -15,9 +15,9 @@ export const useMessengerStore = defineStore({
         connection: null as signalR.HubConnection | null,
     }),
     getters: {
-        isConnected: (state) => {
+        isConnected: (store) => {
             return (
-                state.connection?.state == signalR.HubConnectionState.Connected
+                store.connection?.state == signalR.HubConnectionState.Connected
             );
         },
     },
@@ -34,23 +34,18 @@ export const useMessengerStore = defineStore({
             this.connection.on("OnReceiveMessage", (message: IMessage) => {
                 this.messages.push(message);
             });
-            
-            this.connection.on("OnConnection", (messages: IMessage[]) => {
+
+            this.connection.on("OnConnect", (messages: IMessage[]) => {
                 this.messages = messages;
             });
-            
+
             const start = async () => {
-                try {
-                    await this.connection?.start();
-                    console.log("SignalR connected");
-                } catch (err) {
-                    console.error(err);
-                    console.log("Trying to reconnect...");
-                    setTimeout(start, 5000);
-                }
-            }
+                await this.connection?.start();
+                console.log("SignalR connected");
+            };
+
             this.connection.onclose(async () => {
-                await start()
+                await start();
             });
 
             await start();
