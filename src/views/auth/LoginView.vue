@@ -56,7 +56,7 @@ async function invalidSubmit(values: any) {
                         type="username"
                         name="username"
                         id="username"
-                        autocomplete="off"
+                        autocomplete="on"
                     />
                     <label for="username">Имя Пользователя:</label>
                     <div class="icon">
