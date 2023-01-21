@@ -122,12 +122,11 @@ label {
     font-weight: 400;
 }
 form {
-    padding: 40px 30px;
+    padding: 40px 30px 20px;
     background: white;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 20px;
     width: 300px;
     h4 {
         margin-bottom: 20px;
@@ -139,7 +138,6 @@ form {
     }
     p {
         line-height: 155%;
-        margin-bottom: 5px;
         font-size: 14px;
         color: #000;
         opacity: 0.65;

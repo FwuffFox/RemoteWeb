@@ -13,12 +13,12 @@ const { user } = storeToRefs(auth);
 const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
-onMounted(() => {
-    messengerStore.connect();
+onMounted(async () => {
+    await messengerStore.connect();
 });
 
-onUnmounted(() => {
-    messengerStore.disconnect();
+onUnmounted(async () => {
+    await messengerStore.disconnect();
 });
 
 const input = ref("");

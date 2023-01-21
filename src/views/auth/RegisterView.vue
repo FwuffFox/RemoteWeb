@@ -1,18 +1,35 @@
 <script setup lang="ts">
 import { Field, Form } from "vee-validate";
-var count = 0;
+import { ref } from "vue";
+import { useAlertStore } from "@/stores/alert.store";
+import { storeToRefs } from "pinia";
+
+const alertStore = useAlertStore();
+const { alert } = storeToRefs(alertStore);
+
+let count = ref(0);
 
 function onButtonClick() {
-    count += 1;
+    count.value += 1;
+}
+
+
+async function onSubmit(values: any) {
+    if (count.value == 0) count.value++;
+    alertStore.error(values);
 }
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
-        <div class="register-container">
-            <Form action="">
+        {{ count }}
+        <div class="register-container" v-if="count === 0">
+            <Form class="register" @submit="onSubmit">
                 <h4>Регистрация</h4>
+                <v-alert v-if="alert" type="success" variant="flat">{{
+                    alert?.message
+                }}</v-alert>
                 <div class="floating-label">
                     <Field
                         placeholder="Имя пользователя"
@@ -40,11 +57,12 @@ function onButtonClick() {
                     </div>
                 </div>
                 <div class="group">
-                    <RouterLink class="link-button" to="/auth/register">
-                        <button @click="onButtonClick">Далее</button>
-                    </RouterLink>
+                    <button type="submit">Далее</button>
                 </div>
             </Form>
+        </div>
+        <div class="register-container2" v-if="count === 1">
+            {{ alert?.message }}
         </div>
     </div>
 </template>
@@ -75,12 +93,7 @@ $primary: colors.$primary-color;
         margin: 20px;
     }
 }
-h1 {
-    cursor: help;
-    margin: 0;
-    text-transform: uppercase;
-    padding-bottom: 5px;
-}
+
 label {
     font-size: 12.5px;
     color: #000;
@@ -88,12 +101,11 @@ label {
     font-weight: 400;
 }
 form {
-    padding: 40px 30px;
     background: white;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 20px;
+    padding: 40px 30px 20px;
     width: 300px;
     h4 {
         margin-bottom: 20px;
@@ -105,7 +117,6 @@ form {
     }
     p {
         line-height: 155%;
-        margin-bottom: 5px;
         font-size: 14px;
         color: #000;
         opacity: 0.65;
@@ -130,7 +141,7 @@ button {
     color: #fff;
     font-size: 14px;
     font-weight: 500;
-    box-shadow: 0px 2px 6px -1px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.13);
     border: none;
     transition: all 0.3s ease;
     outline: 0;
@@ -144,7 +155,7 @@ button {
 }
 input {
     font-size: 16px;
-    padding: 20px 0px;
+    padding: 20px 0;
     height: 56px;
     border: none;
     border-bottom: solid 1px rgba(0, 0, 0, 0.1);
@@ -218,11 +229,20 @@ input {
                 transition: all 0.3s ease;
             }
         }
+
+        i {
+            height: 0;
+        }
     }
 }
-.register-container{
+.register-container {
     display: flex;
     width: 50%;
     justify-content: center;
+}
+
+.register {
+    align-items: center;
+    align-self: center;
 }
 </style>

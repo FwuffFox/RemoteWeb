@@ -9,9 +9,7 @@ export const useAuthStore = defineStore({
     id: "Auth",
     state: () => ({
         token: localStorage.getItem("token"),
-        user: JSON.parse(
-            localStorage.getItem("user") as string
-        ) as IUser | null,
+        user: JSON.parse(localStorage.getItem("user") as string) as IUser | null,
         returnUrl: null,
     }),
     getters: {
@@ -21,20 +19,15 @@ export const useAuthStore = defineStore({
     },
     actions: {
         async login(username: string, password: string) {
-            this.token = await fetchWrapper.post<string>(
-                BASE_URL + "/auth/login",
-                {
-                    username: username,
-                    password: password,
-                }
-            );
+            this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/login", {
+                username: username,
+                password: password,
+            });
             if (this.token == null) return;
             localStorage.setItem("username", username);
             localStorage.setItem("token", this.token);
 
-            this.user = await fetchWrapper.get<IUser>(
-                BASE_URL + `/user?username=${username}`
-            );
+            this.user = await fetchWrapper.get<IUser>(BASE_URL + `/user?username=${username}`);
             localStorage.setItem("user", JSON.stringify(this.user));
             await router.push(this.returnUrl || "/");
             this.returnUrl = null;

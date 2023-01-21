@@ -77,8 +77,6 @@ async function catchAxiosError(error: any) {
             await router.push("/error/500");
         }
         console.log(error.response!);
-        useAlertStore().error(
-            error.response?.data.errors || error.response?.data
-        );
+        useAlertStore().error(error.response?.data.errors || error.response?.data);
     }
 }
