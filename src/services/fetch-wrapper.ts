@@ -8,8 +8,6 @@ export const fetchWrapper = {
     post: post,
 };
 
-const alertStore = useAlertStore();
-
 /**
  * Must be awaited!
  * @param url Endpoint where we want to make our request.
@@ -33,7 +31,7 @@ async function post<ReturnType = any>(
         console.table(response.data);
         return response.data;
     } catch (error) {
-        catchAxiosError(error);
+        await catchAxiosError(error);
     }
     return null;
 }
@@ -54,7 +52,7 @@ async function get<GetType>(url: string): Promise<GetType | null> {
         console.table(response.data);
         return response.data;
     } catch (error) {
-        catchAxiosError(error);
+        await catchAxiosError(error);
     }
     return null;
 }
@@ -69,16 +67,18 @@ function authHeader(): string {
 /**
  * @param error Error that is caused during api request.
  */
-function catchAxiosError(error: any) {
+async function catchAxiosError(error: any) {
     if (axios.isAxiosError(error)) {
         console.error(error);
         const { user, logout } = useAuthStore();
         if ([401, 403].includes(error.response?.status!) && user) {
-            logout();
+            await logout();
         } else if (error.response?.status! == 500) {
-            router.push("/error/500");
+            await router.push("/error/500");
         }
         console.log(error.response!);
-        alertStore.error(error.response?.data.errors || error.response?.data);
+        useAlertStore().error(
+            error.response?.data.errors || error.response?.data
+        );
     }
 }
