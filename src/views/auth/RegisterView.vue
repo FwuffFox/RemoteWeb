@@ -1,35 +1,82 @@
 <script setup lang="ts">
 import { Field, Form } from "vee-validate";
 import { ref } from "vue";
+import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import { storeToRefs } from "pinia";
+import * as Yup from "yup";
+import { stringifyExpression } from "@vue/compiler-core";
 
+const authStore = useAuthStore();
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-let count = ref(0);
-
-function onButtonClick() {
-    count.value += 1;
+function foo(str: string){
+    return str && str[0] == '@';
 }
 
 
+
+const schema = Yup.object().shape({
+    username: Yup.string()
+    .min(2, "-Введите имя пользователя<br>")
+    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
+
+    fullName: Yup.string()
+    .required("-Введите ваше полное имя\n"),
+    
+    jobTitle: Yup.string()
+    .required("-Введите вашу должность\n"),
+
+    first_password: Yup.string()
+    .required("-Длина пароля должна быть не меньше 8 символов\n")
+    .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+
+    seccond_password: Yup.string()
+    .oneOf([Yup.ref("first_password"), null], "-Пароли не совпадают\n"),
+});
+
 async function onSubmit(values: any) {
-    if (count.value == 0) count.value++;
-    alertStore.error(values);
+    alertStore.clear();
+
+    const { username, first_password, fullName, jobTitle } = values;
+    console.debug("register in with values:", values);
+
+    await authStore.register(username, first_password, fullName, jobTitle);
+}
+
+async function invalidSubmit(error_date: any) {
+    alertStore.clear();
+
+    const {username, first_password, fullName, jobTitle} = error_date.errors;
+    console.debug(error_date);
+
+    alertStore.error(username + fullName + jobTitle + first_password);
+}
+
+
+
+async function attempt_to_send() {
+    alertStore.clear();
+
+
+    //console.debug("Sent to registration:", input_date);
+    //await authStore.register(input_date.username, input_date.first_password, input_date.fullName, input_date.jobTitle);
 }
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
-        {{ count }}
-        <div class="register-container" v-if="count === 0">
-            <Form class="register" @submit="onSubmit">
+        <div class="register-container">
+            <Form class="register" @submit="onSubmit" @invalid-submit="invalidSubmit" :validation-schema="schema">
+
                 <h4>Регистрация</h4>
-                <v-alert v-if="alert" type="success" variant="flat">{{
+
+                <v-alert v-if="alert" type="error" variant="flat">{{
                     alert?.message
                 }}</v-alert>
+
                 <div class="floating-label">
                     <Field
                         placeholder="Имя пользователя"
@@ -42,30 +89,76 @@ async function onSubmit(values: any) {
                     <div class="icon">
                         <v-icon icon="mdi-account" />
                     </div>
+                </div>              
+                <div class="floating-label">
+                    <Field
+                        placeholder="Фамилия Имя Отчество"
+                        type="common"
+                        name="fullName"
+                        id="fullName"
+                        autocomplete="on"
+                    />
+                    <label for="fullName">Фамилия Имя Отчество:</label>
+                    <div class="icon">
+                        <v-icon icon="mdi-account" />
+                    </div>
+                </div>
+                <div class="floating-label">
+                    <Field
+                        placeholder="Должность"
+                        type="common"
+                        name="jobTitle"
+                        id="jobTitle"
+                        autocomplete="on"
+                    />
+                    <label for="jobTitle">Должность:</label>
+                    <div class="icon">
+                        <v-icon icon="mdi-account" />
+                    </div>
                 </div>
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль"
                         type="password"
-                        name="password"
-                        id="password"
+                        name="first_password"
+                        id="first_password"
                         autocomplete="off"
                     />
-                    <label for="password">Пароль:</label>
+                    <label for="first_password">Пароль:</label>
                     <div class="icon">
                         <v-icon icon="mdi-lock-outline" />
                     </div>
                 </div>
+                <div class="floating-label">
+                    <Field
+                        placeholder="Пароль ещё раз"
+                        type="password"
+                        name="second_password"
+                        id="second_password"
+                        autocomplete="off"
+                    />
+                    <label for="second_password">Пароль:</label>
+                    <div class="icon">
+                        <v-icon icon="mdi-lock-outline" />
+                    </div>
+                </div> 
+
                 <div class="group">
-                    <button type="submit">Далее</button>
+                    <button type="submit">Отправить</button>
                 </div>
+
+                <RouterLink class="link-button" to="/auth/login">
+                    <button>К входу</button>
+                </RouterLink>
+                <a href="" class="discrete" target="_blank">Помощь</a>
+
             </Form>
-        </div>
-        <div class="register-container2" v-if="count === 1">
-            {{ alert?.message }}
         </div>
     </div>
 </template>
+
+
+
 <style scoped lang="scss">
 @use "../../assets/colors.scss" as colors;
 $primary: colors.$primary-color;
@@ -99,31 +192,6 @@ label {
     color: #000;
     opacity: 0.8;
     font-weight: 400;
-}
-form {
-    background: white;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 40px 30px 20px;
-    width: 300px;
-    h4 {
-        margin-bottom: 20px;
-        color: rgba($primary, 0.5);
-        span {
-            color: rgba($primary, 1);
-            font-weight: 700;
-        }
-    }
-    p {
-        line-height: 155%;
-        font-size: 14px;
-        color: #000;
-        opacity: 0.65;
-        font-weight: 400;
-        max-width: 200px;
-        margin-bottom: 40px;
-    }
 }
 .link-button {
     &:hover {
@@ -169,6 +237,31 @@ input {
         border-bottom: solid 1px $primary;
         outline: 0;
         box-shadow: 0 2px 6px -8px rgba($primary, 0.45);
+    }
+}
+Form {
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px 30px 20px;
+    width: 300px;
+    h4 {
+        margin-bottom: 20px;
+        color: rgba($primary, 0.5);
+        span {
+            color: rgba($primary, 1);
+            font-weight: 700;
+        }
+    }
+    p {
+        line-height: 155%;
+        font-size: 14px;
+        color: #000;
+        opacity: 0.65;
+        font-weight: 400;
+        max-width: 200px;
+        margin-bottom: 40px;
     }
 }
 .floating-label {

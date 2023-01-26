@@ -3,12 +3,12 @@ import IconEmail from "@/components/icons/IconEmail.vue";
 import IconLock from "@/components/icons/IconLock.vue";
 
 import { RouterLink } from "vue-router";
-import { useAuthStore } from "@/stores/auth.store";
 import * as Yup from "yup";
 import { Field, Form } from "vee-validate";
 import router from "@/router";
-import { useAlertStore } from "@/stores/alert.store";
 import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/auth.store";
+import { useAlertStore } from "@/stores/alert.store";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
@@ -78,7 +78,7 @@ async function invalidSubmit(values: any) {
                 </div>
                 <button type="submit">Войти</button>
                 <RouterLink class="link-button" to="/auth/register">
-                    <button>Регистрация</button>
+                    <button>К регистрации</button>
                 </RouterLink>
                 <a href="" class="discrete" target="_blank">Помощь</a>
             </Form>

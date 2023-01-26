@@ -32,6 +32,27 @@ export const useAuthStore = defineStore({
             await router.push(this.returnUrl || "/");
             this.returnUrl = null;
         },
+
+        async register(username: string, password: string, fullName: string, jobTitle: string){
+            this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/register", {
+                username: username,
+                password: password,
+                fullName: fullName,
+                jobTitle: jobTitle,
+            });
+            
+            console.debug("token is: ", this.token);
+            console.debug({
+                username: username,
+                password: password,
+                fullName: fullName,
+                jobTitle: jobTitle,
+            });
+            if (this.token == null) return;
+
+            this.login(username, password);
+        },
+
         async logout() {
             await router.push("/auth/login");
             localStorage.removeItem("user");
