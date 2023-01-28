@@ -16,9 +16,7 @@ export const useMessengerStore = defineStore({
     }),
     getters: {
         isConnected: (store) => {
-            return (
-                store.connection?.state == signalR.HubConnectionState.Connected
-            );
+            return store.connection?.state == signalR.HubConnectionState.Connected;
         },
     },
     actions: {
@@ -32,11 +30,14 @@ export const useMessengerStore = defineStore({
                 .build();
 
             this.connection.on("OnReceiveMessage", (message: IMessage) => {
+                console.debug(message);
                 this.messages.push(message);
             });
 
             this.connection.on("OnConnect", (messages: IMessage[]) => {
+                console.debug(messages);
                 this.messages = messages;
+                console.log(this.messages);
             });
 
             const start = async () => {
@@ -52,11 +53,7 @@ export const useMessengerStore = defineStore({
         },
         async send(message: string) {
             try {
-                await this.connection?.invoke(
-                    "SendMessage",
-                    message,
-                    user?.username
-                );
+                await this.connection?.invoke("SendMessage", message, user?.username);
             } catch (error) {
                 console.error(error);
             }

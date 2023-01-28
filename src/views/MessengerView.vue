@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script async setup lang="ts">
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
 import LogoutButton from "@/components/LogoutButton.vue";
@@ -6,6 +6,7 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
+import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 
 const auth = useAuthStore();
 const { user } = storeToRefs(auth);
@@ -29,30 +30,16 @@ async function sendMessage() {
     input.value = "";
 }
 
-var isLoading = computed(() => !messengerStore.isConnected);
+const isLoading = computed(() => !messengerStore.isConnected);
 </script>
 
 <template>
     <div class="page">
         <main class="app-container">
-            <!-- TODO: Center the progress -->
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <div id="sidebar">
-                <div class="header">
-                    <h5>Чаты</h5>
-                </div>
-                <div class="profile">
-                    <div class="d-flex align-items-center flex-grow-1">
-                        <v-avatar class="me-2" size="50" color="blue">
-                            <span>CJ</span>
-                        </v-avatar>
-                        <a v-if:="user">{{ user.fullName.split(" ")[1] }}</a>
-                    </div>
-                    <LogoutButton />
-                </div>
-            </div>
+            <MessengerSidebar />
             <div id="main-content">
                 <div class="header">
                     <h5>Название чата</h5>
@@ -60,7 +47,7 @@ var isLoading = computed(() => !messengerStore.isConnected);
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
                         <li v-for="message in messages" :key="message.body">
-                            <TextMessage :message="message" />
+                            <TextMessage message="message" />
                         </li>
                     </ul>
                 </div>
