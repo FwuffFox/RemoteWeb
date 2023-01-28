@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import { storeToRefs } from "pinia";
+import router from "@/router";
 import * as Yup from "yup";
 import { stringifyExpression } from "@vue/compiler-core";
 
@@ -11,15 +12,14 @@ const authStore = useAuthStore();
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-function foo(str: string){
-    return str && str[0] == '@';
+if (authStore.isLoggedIn) {
+    router.push("/");
 }
-
 
 
 const schema = Yup.object().shape({
     username: Yup.string()
-    .min(2, "-Введите имя пользователя<br>")
+    .min(2, "-Введите имя пользователя\n")
     .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
 
     fullName: Yup.string()

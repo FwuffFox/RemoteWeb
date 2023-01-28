@@ -14,7 +14,7 @@ const authStore = useAuthStore();
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-if (authStore.user) {
+if (authStore.isLoggedIn) {
     router.push("/");
 }
 
