@@ -306,8 +306,8 @@ Form {
         }
     }
     .icon {
-        position: absolute;
-        top: 0;
+        position:absolute;
+        top:1cm;
         left: 0;
         height: 56px;
         width: 44px;
