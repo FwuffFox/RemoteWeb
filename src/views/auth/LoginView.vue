@@ -34,11 +34,11 @@ async function invalidSubmit(values: any) {
 
 const schema = Yup.object().shape({
     username: Yup.string()
-        .min(2, "-Введите имя пользователя\n"),
+        .min(5, "Имя пользователя должно быть больше 4 символов.\n"),
 
     password: Yup.string()
-        .required("-Длина пароля должна быть не меньше 8 символов\n")
-        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        .required("Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "Длина пароля должна быть не меньше 8 символов\n"),
 });
 
 configure({

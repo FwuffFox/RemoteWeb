@@ -29,19 +29,19 @@ async function invalidSubmit(error_date: any) {
 
 const schema = Yup.object().shape({
     username: Yup.string()
-        .min(2, "-Введите имя пользователя\n"),
+        .min(2, "Введите имя пользователя\n"),
 
-    fullName: Yup.string().required("-Введите ваше полное имя\n"),
+    fullName: Yup.string().required("Введите ваше полное имя\n"),
 
-    jobTitle: Yup.string().required("-Введите вашу должность\n"),
+    jobTitle: Yup.string().required("Введите вашу должность\n"),
 
     first_password: Yup.string()
-        .required("-Длина пароля должна быть не меньше 8 символов\n")
-        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        .required("Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "Длина пароля должна быть не меньше 8 символов\n"),
 
-    second_password: Yup.string().oneOf([Yup.ref("first_password"), undefined], "-Пароли не совпадают\n"),
+    second_password: Yup.string().oneOf([Yup.ref("first_password"), undefined], "Пароли не совпадают\n"),
 });
-
+ы
 configure({
     validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
     validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
