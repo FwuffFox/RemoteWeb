@@ -5,7 +5,7 @@ import { useAlertStore } from "@/stores/alert.store";
 import router from "@/router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
-import IconLock from "@/components/icons/IconLock.vue";
+import { IconPeople, IconLock} from "@/components/icons";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
@@ -58,107 +58,115 @@ watch(username, (newValue, oldValue) => {
 </script>
 
 <template>
-    <div class="session">
+    <div class="session d-flex">
         <div class="left" />
+        <div class="register-container">
+            <Form
+                class="register w-75"
+                @submit="onSubmit"
+                @invalid-submit="invalidSubmit"
+                :validation-schema="schema"
+                v-slot="{ errors }"
+            >
+                <h4>Регистрация</h4>
 
-        <Form
-            class="register"
-            @submit="onSubmit"
-            @invalid-submit="invalidSubmit"
-            :validation-schema="schema"
-            v-slot="{ errors }"
-        >
-            <h4>Регистрация</h4>
+                <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
+                        alertStore.alert?.message
+                    }}</v-alert>
 
-            <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
-                alertStore.alert?.message
-            }}</v-alert>
-            <div class="style_error_messege">
-                {{ errors.username }}
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Имя пользователя"
-                    v-model="username"
-                    type="username"
-                    name="username"
-                    id="username"
-                    autocomplete="on"
-                />
-                <label for="username">Имя Пользователя:</label>
-            </div>
-
-            <div class="style_error_messege">
-                {{ errors.fullName }}
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Фамилия Имя Отчество"
-                    type="common"
-                    name="fullName"
-                    id="fullName"
-                    autocomplete="on"
-                />
-                <label for="fullName">Фамилия Имя Отчество:</label>
-            </div>
-
-            <div class="style_error_messege">
-                {{ errors.jobTitle }}
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Должность"
-                    type="common"
-                    name="jobTitle"
-                    id="jobTitle"
-                    autocomplete="on"
-                />
-                <label for="jobTitle">Должность:</label>
-            </div>
-
-            <div class="style_error_messege">
-                {{ errors.first_password }}
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Пароль"
-                    type="password"
-                    name="first_password"
-                    id="first_password"
-                    autocomplete="off"
-                />
-                <label for="first_password">Пароль:</label>
-                <div class="icon">
-                    <IconLock />
+                <div class="floating-label">
+                    <Field
+                        placeholder="Имя пользователя"
+                        v-model="username"
+                        type="username"
+                        name="username"
+                        id="username"
+                        autocomplete="on"
+                    />
+                    <label for="username">Имя Пользователя:</label>
+                    <div class="icon">
+                        <IconPeople />
+                    </div>
                 </div>
-            </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.username">
+                    {{ errors.username }}
+                </VAlert>
 
-            <div class="style_error_messege">
-                {{ errors.second_password }}
-            </div>
-            <div class="floating-label">
-                <Field
-                    placeholder="Пароль ещё раз"
-                    type="password"
-                    name="second_password"
-                    id="second_password"
-                    autocomplete="off"
-                />
-                <label for="second_password">Пароль:</label>
-                <div class="icon">
-                    <IconLock />
+                <div class="floating-label">
+                    <Field
+                        placeholder="Фамилия Имя Отчество"
+                        type="common"
+                        name="fullName"
+                        id="fullName"
+                        autocomplete="on"
+                    />
+                    <label for="fullName">Фамилия Имя Отчество:</label>
+                    <div class="icon">
+                        <IconPeople />
+                    </div>
                 </div>
-            </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.fullName">
+                    {{ errors.fullName }}
+                </VAlert>
 
-            <div class="group">
-                <button type="submit">Отправить</button>
-            </div>
+                <div class="floating-label">
+                    <Field
+                        placeholder="Должность"
+                        type="common"
+                        name="jobTitle"
+                        id="jobTitle"
+                        autocomplete="on"
+                    />
+                    <label for="jobTitle">Должность:</label>
+                </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.jobTitle">
+                    {{ errors.jobTitle }}
+                </VAlert>
 
-            <RouterLink class="link-button" to="/auth/login">
-                <button>К входу</button>
-            </RouterLink>
-            <a href="" class="discrete" target="_blank">Помощь</a>
-        </Form>
+                <div class="floating-label">
+                    <Field
+                        placeholder="Пароль"
+                        type="password"
+                        name="first_password"
+                        id="first_password"
+                        autocomplete="off"
+                    />
+                    <label for="first_password">Пароль:</label>
+                    <div class="icon">
+                        <IconLock />
+                    </div>
+                </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.first_password">
+                    {{ errors.first_password }}
+                </VAlert>
+
+                <div class="floating-label">
+                    <Field
+                        placeholder="Пароль ещё раз"
+                        type="password"
+                        name="second_password"
+                        id="second_password"
+                        autocomplete="off"
+                    />
+                    <label for="second_password">Пароль:</label>
+                    <div class="icon">
+                        <IconLock />
+                    </div>
+                </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.second_password">
+                    {{ errors.second_password }}
+                </VAlert>
+
+                <div class="group">
+                    <button type="submit">Отправить</button>
+                </div>
+
+                <RouterLink class="link-button" to="/auth/login">
+                    <button>К входу</button>
+                </RouterLink>
+                <a href="" class="discrete" target="_blank">Помощь</a>
+            </Form>
+        </div>
     </div>
 </template>
 
@@ -248,7 +256,6 @@ Form {
     flex-direction: column;
     align-items: flex-start;
     padding: 40px 30px 20px;
-    width: 50%;
     h4 {
         margin-bottom: 20px;
         color: rgba($primary, 0.5);
@@ -370,6 +377,16 @@ $displacement: 3px;
     }
     100% {
         transform: translateX(0px);
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .left {
+        display: none;
+    }
+
+    .register-container {
+        width: 100%;
     }
 }
 </style>

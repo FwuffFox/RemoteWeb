@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import IconEmail from "@/components/icons/IconEmail.vue";
-import IconLock from "@/components/icons/IconLock.vue";
-
+import { IconPeople, IconLock } from "@/components/icons";
 import { RouterLink } from "vue-router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
@@ -59,24 +57,24 @@ watch(username, (newValue, oldValue) => {
 </script>
 
 <template>
-    <div class="session">
-        <div class="left" />
-        <div class="login-container">
+    <div class="session d-flex vh-100">
+        <div class="left w-50" />
+        <div class="login-container w-50 d-flex justify-content-center">
             <Form
-                class="log-in"
+                class="log-in w-75 align-items-center align-self-center"
                 @submit="onSubmit"
                 @invalid-submit="invalidSubmit"
                 :validation-schema="schema"
                 v-slot="{ errors }"
             >
-                <h4>Мы <span>Remote</span></h4>
+                <h4 class="font-weight-bold">
+                    Мы <span>Remote</span>
+                </h4>
+
                 <p>Добро пожаловать!</p>
 
                 <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
 
-                <div class="style_error_messege">
-                    {{ errors.username }}
-                </div>
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"
@@ -88,13 +86,13 @@ watch(username, (newValue, oldValue) => {
                     />
                     <label for="username">Имя Пользователя:</label>
                     <div class="icon">
-                        <IconEmail />
+                        <IconPeople />
                     </div>
-                    <ErrorMessage name="username" />
                 </div>
-                <div class="style_error_messege">
-                    {{ errors.password }}
-                </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.username">
+                    {{ errors.username }}
+                </VAlert>
+
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль"
@@ -108,6 +106,9 @@ watch(username, (newValue, oldValue) => {
                         <IconLock />
                     </div>
                 </div>
+                <VAlert class="w-100" type="error" variant="text" v-if="errors.password">
+                    {{ errors.password }}
+                </VAlert>
 
                 <button type="submit">Войти</button>
                 <RouterLink class="link-button" to="/auth/register">
@@ -128,25 +129,7 @@ watch(username, (newValue, oldValue) => {
     margin: 0;
 }
 $primary: colors.$primary-color;
-html,
-body {
-    height: 100vh;
-    width: 100vw;
-    margin: 0 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-.log-in {
-    align-items: center;
-    align-self: center;
-}
-h4 {
-    font-size: 24px;
-    font-weight: 600;
-    color: black;
-    opacity: 0.85;
-}
+
 label {
     font-size: 12.5px;
     color: #000;
@@ -159,7 +142,6 @@ form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 300px;
     h4 {
         margin-bottom: 20px;
         color: rgba($primary, 0.5);
@@ -323,24 +305,9 @@ $displacement: 3px;
         transform: translateX(0px);
     }
 }
-.session {
-    display: flex;
-    flex-direction: row;
-    width: auto;
-    height: 100vh !important;
-    margin: auto auto;
-    background: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0px 2px 6px -1px rgba(0, 0, 0, 0.12);
-}
 .left {
-    width: 50%;
-    min-height: 100%;
-    position: relative;
     background-image: url("https://img.freepik.com/free-vector/gradient-dynamic-lines-background_23-2149020285.jpg?w=826&t=st=1672227568~exp=1672228168~hmac=19b6f9f37f6d3f26229269851337ea8896db8ef92d727254f93f5e4bfb19d764");
     background-size: cover;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
     svg {
         height: 40px;
         width: auto;
@@ -348,9 +315,14 @@ $displacement: 3px;
     }
 }
 
-.login-container {
-    display: flex;
-    width: 50%;
-    justify-content: center;
+// Phone screens.
+@media screen and (max-width: 620px) {
+    .left {
+        display: none;
+    }
+
+    .login-container {
+        width: 100%;
+    }
 }
 </style>

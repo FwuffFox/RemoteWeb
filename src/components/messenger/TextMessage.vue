@@ -10,13 +10,16 @@ const { user } = useAuthStore();
 </script>
 
 <template>
-    <div class="message-item" :class="{ ismine: user?.username === message.sender?.username }">
-        <v-avatar> {{ message.sender?.username[0].toUpperCase() }}</v-avatar>
+    <div
+        class="message-item d-flex justify-content-start"
+        :class="{ ismine: user?.username === message.sender?.username }"
+    >
+        <v-avatar> {{ message.sender?.username.substring(1, 3).toUpperCase() }}</v-avatar>
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
-                <span class="author">{{ message.sender.username }}</span>
+                <span class="author text-no-wrap">{{ message.sender.username }}</span>
             </div>
-            <div class="content">{{ message.body }}</div>
+            <div class="content text-break">{{ message.body }}</div>
         </div>
     </div>
 </template>
@@ -24,25 +27,18 @@ const { user } = useAuthStore();
 <style scoped lang="scss">
 .message-item {
     margin-bottom: 12px;
-    display: flex;
-    justify-content: flex-start;
 
     .message-content {
         font-size: 16px;
-        background: #f7f8fa;
+        background: wheat;
         padding: 7px 10px;
         border-radius: 10px;
         max-width: 60%;
-
-        .content {
-            word-wrap: break-word;
-        }
 
         .author {
             font-size: 14px;
             font-weight: 500;
             margin-right: 10px;
-            white-space: nowrap;
         }
     }
 }

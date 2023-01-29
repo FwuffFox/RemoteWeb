@@ -2,8 +2,13 @@
 import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
+import { onBeforeMount, type Ref } from "vue";
+import type { IUser } from "@/models/IUser";
 
-const { user } = storeToRefs(useAuthStore());
+let user: Ref<IUser>;
+onBeforeMount(() => {
+    user = storeToRefs(useAuthStore()).user as Ref<IUser>;
+});
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { ref, onMounted, onUnmounted, computed, onBeforeMount, onBeforeUnmount } from "vue";
+import { ref, computed, onBeforeMount, onBeforeUnmount } from "vue";
 
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
@@ -29,7 +29,7 @@ const isLoading = computed(() => !messengerStore.isConnected);
 </script>
 
 <template>
-    <div class="page">
+    <div class="d-block">
         <main class="app-container">
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
@@ -82,10 +82,6 @@ const isLoading = computed(() => !messengerStore.isConnected);
 <style lang="scss">
 .v-overlay__content {
     align-items: center;
-}
-
-.page {
-    display: block;
 }
 .app-container {
     display: flex;

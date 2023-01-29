@@ -41,22 +41,22 @@ export const useMessengerStore = defineStore({
                 console.log("SignalR connected");
             };
 
-            this.connection.onclose(async () => {
+            /*this.connection.onclose(async () => {
                 await start();
-            });
+            });*/
 
             await start();
         },
         async send(message: string) {
             try {
-                await this.connection?.invoke("SendMessage", message, user.value?.username);
+                await this.connection?.invoke("SendMessage", message);
             } catch (error) {
                 console.error(error);
             }
         },
         async disconnect() {
+            console.log("Connection disposed");
             await this.connection?.stop();
-            console.log("SignalR disconnected");
         },
     },
 });
