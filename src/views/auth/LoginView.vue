@@ -5,18 +5,23 @@ import IconLock from "@/components/icons/IconLock.vue";
 import { RouterLink } from "vue-router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
+
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
+import { onBeforeMount, ref, watch } from "vue";
 
-const authStore = useAuthStore();
+
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-if (authStore.isLoggedIn) {
-    router.push("/");
-}
+onBeforeMount(() => {
+    const authStore = useAuthStore();
+    if (authStore.isLoggedIn) {
+        router.push("/");
+    }
+});
 
 
 async function onSubmit(values: any) {
@@ -24,7 +29,7 @@ async function onSubmit(values: any) {
 
     const { username, password } = values;
     console.debug("logging in with values:", values);
-    await authStore.login(username, password);
+    await useAuthStore().login(username, password);
 }
 
 async function invalidSubmit(values: any) {
@@ -47,6 +52,15 @@ configure({
   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
   validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
+
+const username = ref("");
+watch(username, (newValue, oldValue) => {
+    newValue = newValue.trim();
+    if (!newValue.startsWith("@")) newValue = "@" + newValue;
+    username.value = newValue;
+});
+
+const password = ref("");
 </script>
 
 <template>
@@ -72,6 +86,7 @@ configure({
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"
+                        v-model="username"
                         type="username"
                         name="username"
                         id="username"
@@ -81,6 +96,7 @@ configure({
                     <div class="icon">
                         <IconEmail />
                     </div>
+                    <ErrorMessage name="username"/>
                 </div>
                 <div class="style_error_messege">
                         {{ errors.password }}
@@ -113,8 +129,7 @@ configure({
 @use "../../assets/colors.scss" as colors;
 @use "../../assets/main.scss" as main;
 * {
-    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica,
-        Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica, Arial, sans-serif;
     font-weight: 300;
     margin: 0;
 }

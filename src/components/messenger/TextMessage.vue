@@ -10,11 +10,8 @@ const { user } = useAuthStore();
 </script>
 
 <template>
-    <div
-        class="message-item"
-        :class="{ ismine: user?.username == message.sender.username }"
-    >
-        <v-avatar> {{ message.sender.username[0].toUpperCase() }}</v-avatar>
+    <div class="message-item" :class="{ ismine: user?.username === message.sender?.username }">
+        <v-avatar> {{ message.sender?.username[0].toUpperCase() }}</v-avatar>
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
                 <span class="author">{{ message.sender.username }}</span>
@@ -42,7 +39,6 @@ const { user } = useAuthStore();
         }
 
         .author {
-
             font-size: 14px;
             font-weight: 500;
             margin-right: 10px;

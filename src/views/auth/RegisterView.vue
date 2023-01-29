@@ -8,9 +8,9 @@ import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
 import { stringifyExpression } from "@vue/compiler-core";
 
+
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
-
 
 if (authStore.isLoggedIn) {
     router.push("/");
@@ -33,17 +33,15 @@ const schema = Yup.object().shape({
     username: Yup.string()
     .min(2, "-Введите имя пользователя\n")
     .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
-
-    fullName: Yup.string()
-    .required("-Введите ваше полное имя\n"),
     
-    jobTitle: Yup.string()
-    .required("-Введите вашу должность\n"),
+    fullName: Yup.string().required("-Введите ваше полное имя\n"),
+
+    jobTitle: Yup.string().required("-Введите вашу должность\n"),
 
     first_password: Yup.string()
-    .required("-Длина пароля должна быть не меньше 8 символов\n")
-    .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
-
+        .required("-Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        
     second_password: Yup.string()
     .oneOf([Yup.ref("first_password"), undefined], "-Пароли не совпадают\n"),
 });
@@ -60,7 +58,7 @@ configure({
 <template>
     <div class="session">
         <div class="left" />
-        <div class="register-container">
+
             <Form class="register"
                 @submit="onSubmit"
                 @invalid-submit="invalidSubmit"
@@ -73,7 +71,6 @@ configure({
                 <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
                     alertStore.alert?.message
                 }}</v-alert>
-
                 <div class="style_error_messege">
                         {{ errors.username }}
                 </div>   
@@ -157,7 +154,7 @@ configure({
                     <div class="icon">
                         <v-icon class="icon_in_center" icon="mdi-lock-outline" />
                     </div>
-                </div> 
+                </div>
 
                 <div class="group">
                     <button type="submit">Отправить</button>
@@ -167,13 +164,10 @@ configure({
                     <button>К входу</button>
                 </RouterLink>
                 <a href="" class="discrete" target="_blank">Помощь</a>
-
             </Form>
         </div>
     </div>
 </template>
-
-
 
 <style scoped lang="scss">
 @use "../../assets/colors.scss" as colors;
@@ -328,7 +322,7 @@ Form {
     }
     .icon {
         position: absolute;
-        top: 0;
+        top: 1cm;
         left: 0;
         height: 56px;
         width: 44px;

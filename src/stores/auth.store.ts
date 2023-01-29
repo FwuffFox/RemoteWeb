@@ -34,7 +34,7 @@ export const useAuthStore = defineStore({
                 username: username,
                 password: password,
             });
-
+  
             this.initialization_after_login(username);
         },
 

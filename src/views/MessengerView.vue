@@ -1,67 +1,40 @@
 <script setup lang="ts">
-import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
-import LogoutButton from "@/components/LogoutButton.vue";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, onBeforeMount, onBeforeUnmount } from "vue";
 
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
-
-const auth = useAuthStore();
-const { user } = storeToRefs(auth);
+import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 
 const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
-onMounted(async () => {
+onBeforeMount(async () => {
     await messengerStore.connect();
 });
 
-onUnmounted(async () => {
+onBeforeUnmount(async () => {
     await messengerStore.disconnect();
 });
 
 const input = ref("");
 
 async function sendMessage() {
-    if (!messengerStore.isConnected) return;
+    if (!messengerStore.isConnected || input.value.length == 0) return;
     await messengerStore.send(input.value);
     input.value = "";
 }
 
-var isLoading = computed(() => !messengerStore.isConnected);
+const isLoading = computed(() => !messengerStore.isConnected);
 </script>
 
 <template>
     <div class="page">
         <main class="app-container">
-            <!-- TODO: Center the progress -->
             <v-dialog persistent v-model="isLoading">
-                <v-progress-circular
-                    indeterminate
-                    color="orange"
-                    :size="100"
-                    :width="12"
-                    ;position:
-                    absolute;
-                    left:0;right:0;margin:0
-                    auto;top:50%;transform:translate(0,-50%)
-                />
+                <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <div id="sidebar">
-                <div class="header">
-                    <h5>Чаты</h5>
-                </div>
-                <div class="profile">
-                    <div class="d-flex align-items-center flex-grow-1">
-                        <v-avatar class="me-2" size="50" color="blue">
-                            <span>CJ</span>
-                        </v-avatar>
-                        <a v-if:="user">{{ user.fullName.split(" ")[1] }}</a>
-                    </div>
-                    <LogoutButton />
-                </div>
-            </div>
+            <MessengerSidebar />
             <div id="main-content">
                 <div class="header">
                     <h5>Название чата</h5>
@@ -82,11 +55,7 @@ var isLoading = computed(() => !messengerStore.isConnected);
                         @keyup.enter="sendMessage"
                     />
                     <div class="actions d-flex align-items-center">
-                        <a
-                            role="button"
-                            id="btn-send-message"
-                            @click="sendMessage"
-                        >
+                        <a role="button" id="btn-send-message" @click="sendMessage">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="20"
@@ -100,9 +69,7 @@ var isLoading = computed(() => !messengerStore.isConnected);
                                 class="feather feather-send"
                             >
                                 <line x1="22" y1="2" x2="11" y2="13"></line>
-                                <polygon
-                                    points="22 2 15 22 11 13 2 9 22 2"
-                                ></polygon>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                             </svg>
                         </a>
                     </div>
@@ -113,6 +80,10 @@ var isLoading = computed(() => !messengerStore.isConnected);
 </template>
 
 <style lang="scss">
+.v-overlay__content {
+    align-items: center;
+}
+
 .page {
     display: block;
 }

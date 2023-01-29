@@ -6,7 +6,7 @@ export const router = createRouter({
     routes: [
         {
             path: "/",
-            name: "home",
+            name: "messenger",
             component: () => import("@/views/MessengerView.vue"),
         },
         {
@@ -34,8 +34,7 @@ export const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     useAlertStore().clear();
-    const isPublic =
-        to.path.startsWith("/auth") || to.path.startsWith("/error");
+    const isPublic = to.path.startsWith("/auth") || to.path.startsWith("/error");
     const loggedIn = useAuthStore().isLoggedIn;
 
     if (!isPublic && !loggedIn) {

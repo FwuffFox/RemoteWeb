@@ -6,8 +6,6 @@ import { useAuthStore } from "./auth.store";
 const authStore = useAuthStore();
 const { user } = authStore;
 
-const BASE_URL = `${window.location.origin}/api`;
-
 export const useMessengerStore = defineStore({
     id: "messenger",
     state: () => ({
@@ -16,9 +14,7 @@ export const useMessengerStore = defineStore({
     }),
     getters: {
         isConnected: (store) => {
-            return (
-                store.connection?.state == signalR.HubConnectionState.Connected
-            );
+            return store.connection?.state == signalR.HubConnectionState.Connected;
         },
     },
     actions: {
@@ -32,6 +28,7 @@ export const useMessengerStore = defineStore({
                 .build();
 
             this.connection.on("OnReceiveMessage", (message: IMessage) => {
+                console.debug(message);
                 this.messages.push(message);
             });
 
@@ -52,11 +49,7 @@ export const useMessengerStore = defineStore({
         },
         async send(message: string) {
             try {
-                await this.connection?.invoke(
-                    "SendMessage",
-                    message,
-                    user?.username
-                );
+                await this.connection?.invoke("SendMessage", message, user?.username);
             } catch (error) {
                 console.error(error);
             }

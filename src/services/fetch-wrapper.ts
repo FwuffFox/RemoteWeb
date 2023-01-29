@@ -18,10 +18,7 @@ export const fetchWrapper = {
  * const loginData = { login: "test", password: "test" };
  * const user: User = await post<User>("/our-fake-api/login", loginData);
  */
-async function post<ReturnType = any>(
-    url: string,
-    data: any
-): Promise<ReturnType | null> {
+async function post<ReturnType = any>(url: string, data: any): Promise<ReturnType | null> {
     try {
         const response = await axios.post<ReturnType>(url, data, {
             headers: {
