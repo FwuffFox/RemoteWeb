@@ -18,11 +18,7 @@ export const useAuthStore = defineStore({
         },
     },
     actions: {
-        async login(username: string, password: string) {
-            this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/login", {
-                username: username,
-                password: password,
-            });
+        async initialization_after_login(username: string){
             if (this.token == null) return;
             localStorage.setItem("username", username);
             localStorage.setItem("token", this.token);
@@ -33,6 +29,15 @@ export const useAuthStore = defineStore({
             this.returnUrl = null;
         },
 
+        async login(username: string, password: string) {
+            this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/login", {
+                username: username,
+                password: password,
+            });
+
+            this.initialization_after_login(username);
+        },
+
         async register(username: string, password: string, fullName: string, jobTitle: string){
             this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/register", {
                 username: username,
@@ -40,17 +45,8 @@ export const useAuthStore = defineStore({
                 fullName: fullName,
                 jobTitle: jobTitle,
             });
-            
-            console.debug("token is: ", this.token);
-            console.debug({
-                username: username,
-                password: password,
-                fullName: fullName,
-                jobTitle: jobTitle,
-            });
-            if (this.token == null) return;
 
-            this.login(username, password);
+            this.initialization_after_login(username);
         },
 
         async logout() {
