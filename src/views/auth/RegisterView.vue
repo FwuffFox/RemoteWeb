@@ -41,7 +41,6 @@ const schema = Yup.object().shape({
 
     second_password: Yup.string().oneOf([Yup.ref("first_password"), undefined], "Пароли не совпадают\n"),
 });
-ы
 configure({
     validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
     validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
