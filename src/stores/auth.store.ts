@@ -18,7 +18,7 @@ export const useAuthStore = defineStore({
         },
     },
     actions: {
-        async initialization_after_login(username: string){
+        async initialization_after_login(username: string) {
             if (this.token == null) return;
             localStorage.setItem("username", username);
             localStorage.setItem("token", this.token);
@@ -34,11 +34,11 @@ export const useAuthStore = defineStore({
                 username: username,
                 password: password,
             });
-  
-            this.initialization_after_login(username);
+
+            await this.initialization_after_login(username);
         },
 
-        async register(username: string, password: string, fullName: string, jobTitle: string){
+        async register(username: string, password: string, fullName: string, jobTitle: string) {
             this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/register", {
                 username: username,
                 password: password,
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore({
                 jobTitle: jobTitle,
             });
 
-            this.initialization_after_login(username);
+            await this.initialization_after_login(username);
         },
 
         async logout() {

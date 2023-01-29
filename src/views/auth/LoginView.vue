@@ -12,7 +12,6 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import { onBeforeMount, ref, watch } from "vue";
 
-
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
@@ -22,7 +21,6 @@ onBeforeMount(() => {
         router.push("/");
     }
 });
-
 
 async function onSubmit(values: any) {
     alertStore.clear();
@@ -38,19 +36,18 @@ async function invalidSubmit(values: any) {
 
 const schema = Yup.object().shape({
     username: Yup.string()
-    .min(2, "-Введите имя пользователя\n")
-    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
+        .min(2, "-Введите имя пользователя\n"),
 
     password: Yup.string()
-    .required("-Длина пароля должна быть не меньше 8 символов\n")
-    .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        .required("-Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
 });
 
 configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+    validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+    validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+    validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+    validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
 
 const username = ref("");
@@ -59,15 +56,14 @@ watch(username, (newValue, oldValue) => {
     if (!newValue.startsWith("@")) newValue = "@" + newValue;
     username.value = newValue;
 });
-
-const password = ref("");
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
         <div class="login-container">
-            <Form class="log-in"
+            <Form
+                class="log-in"
                 @submit="onSubmit"
                 @invalid-submit="invalidSubmit"
                 :validation-schema="schema"
@@ -76,13 +72,11 @@ const password = ref("");
                 <h4>Мы <span>Remote</span></h4>
                 <p>Добро пожаловать!</p>
 
-                <v-alert v-if="alert" type="error" variant="flat">{{
-                    alert?.message
-                }}</v-alert>
+                <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
 
                 <div class="style_error_messege">
-                        {{ errors.username }}
-                </div> 
+                    {{ errors.username }}
+                </div>
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"
@@ -96,11 +90,11 @@ const password = ref("");
                     <div class="icon">
                         <IconEmail />
                     </div>
-                    <ErrorMessage name="username"/>
+                    <ErrorMessage name="username" />
                 </div>
                 <div class="style_error_messege">
-                        {{ errors.password }}
-                </div> 
+                    {{ errors.password }}
+                </div>
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль"
@@ -185,7 +179,7 @@ form {
     }
 }
 
-.style_error_messege{
+.style_error_messege {
     width: 100%;
     background-color: orange;
 }

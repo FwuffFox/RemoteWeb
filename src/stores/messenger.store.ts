@@ -1,10 +1,10 @@
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import type { IMessage } from "@/models/IMessage";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
 
 const authStore = useAuthStore();
-const { user } = authStore;
+const { user } = storeToRefs(authStore);
 
 export const useMessengerStore = defineStore({
     id: "messenger",
@@ -49,7 +49,7 @@ export const useMessengerStore = defineStore({
         },
         async send(message: string) {
             try {
-                await this.connection?.invoke("SendMessage", message, user?.username);
+                await this.connection?.invoke("SendMessage", message, user.value?.username);
             } catch (error) {
                 console.error(error);
             }

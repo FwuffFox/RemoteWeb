@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
-import { storeToRefs } from "pinia";
 import router from "@/router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
-import { stringifyExpression } from "@vue/compiler-core";
-
+import IconLock from "@/components/icons/IconLock.vue";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
@@ -17,7 +15,7 @@ if (authStore.isLoggedIn) {
 }
 
 async function onSubmit(values: any) {
-    alertStore.clear()
+    alertStore.clear();
 
     const { username, first_password, fullName, jobTitle } = values;
     console.debug("register in with values:", values);
@@ -26,14 +24,13 @@ async function onSubmit(values: any) {
 }
 
 async function invalidSubmit(error_date: any) {
-    alertStore.clear()
+    alertStore.clear();
 }
 
 const schema = Yup.object().shape({
     username: Yup.string()
-    .min(2, "-Введите имя пользователя\n")
-    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
-    
+        .min(2, "-Введите имя пользователя\n"),
+
     fullName: Yup.string().required("-Введите ваше полное имя\n"),
 
     jobTitle: Yup.string().required("-Введите вашу должность\n"),
@@ -41,131 +38,127 @@ const schema = Yup.object().shape({
     first_password: Yup.string()
         .required("-Длина пароля должна быть не меньше 8 символов\n")
         .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
-        
-    second_password: Yup.string()
-    .oneOf([Yup.ref("first_password"), undefined], "-Пароли не совпадают\n"),
+
+    second_password: Yup.string().oneOf([Yup.ref("first_password"), undefined], "-Пароли не совпадают\n"),
 });
 
 configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+    validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+    validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+    validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+    validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
 
+const username = ref("");
+watch(username, (newValue, oldValue) => {
+    newValue = newValue.trim();
+    if (!newValue.startsWith("@")) newValue = "@" + newValue;
+    username.value = newValue;
+});
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
 
-            <Form class="register"
-                @submit="onSubmit"
-                @invalid-submit="invalidSubmit"
-                :validation-schema="schema"
-                v-slot="{ errors }"
-            >
-                    
-                <h4>Регистрация</h4>
+        <Form
+            class="register"
+            @submit="onSubmit"
+            @invalid-submit="invalidSubmit"
+            :validation-schema="schema"
+            v-slot="{ errors }"
+        >
+            <h4>Регистрация</h4>
 
-                <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
-                    alertStore.alert?.message
-                }}</v-alert>
-                <div class="style_error_messege">
-                        {{ errors.username }}
-                </div>   
-                <div class="floating-label">
-                    <Field
-                        placeholder="Имя пользователя"
-                        type="username"
-                        name="username"
-                        id="username"
-                        autocomplete="on"
-                    />  
-                    <label for="username">Имя Пользователя:</label>
-                    <div class="icon">
-                        <v-icon class="icon_in_center" icon="mdi-account" />
-                    </div>
-                </div>      
+            <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
+                alertStore.alert?.message
+            }}</v-alert>
+            <div class="style_error_messege">
+                {{ errors.username }}
+            </div>
+            <div class="floating-label">
+                <Field
+                    placeholder="Имя пользователя"
+                    v-model="username"
+                    type="username"
+                    name="username"
+                    id="username"
+                    autocomplete="on"
+                />
+                <label for="username">Имя Пользователя:</label>
+            </div>
 
-                <div class="style_error_messege">
-                        {{ errors.fullName }}
-                </div>         
-                <div class="floating-label">
-                    <Field
-                        placeholder="Фамилия Имя Отчество"
-                        type="common"
-                        name="fullName"
-                        id="fullName"
-                        autocomplete="on"
-                    />
-                    <label for="fullName">Фамилия Имя Отчество:</label>
-                    <div class="icon">
-                        <v-icon class="icon_in_center" icon="mdi-account" />
-                    </div>
+            <div class="style_error_messege">
+                {{ errors.fullName }}
+            </div>
+            <div class="floating-label">
+                <Field
+                    placeholder="Фамилия Имя Отчество"
+                    type="common"
+                    name="fullName"
+                    id="fullName"
+                    autocomplete="on"
+                />
+                <label for="fullName">Фамилия Имя Отчество:</label>
+            </div>
+
+            <div class="style_error_messege">
+                {{ errors.jobTitle }}
+            </div>
+            <div class="floating-label">
+                <Field
+                    placeholder="Должность"
+                    type="common"
+                    name="jobTitle"
+                    id="jobTitle"
+                    autocomplete="on"
+                />
+                <label for="jobTitle">Должность:</label>
+            </div>
+
+            <div class="style_error_messege">
+                {{ errors.first_password }}
+            </div>
+            <div class="floating-label">
+                <Field
+                    placeholder="Пароль"
+                    type="password"
+                    name="first_password"
+                    id="first_password"
+                    autocomplete="off"
+                />
+                <label for="first_password">Пароль:</label>
+                <div class="icon">
+                    <IconLock />
                 </div>
+            </div>
 
-                <div class="style_error_messege">
-                        {{ errors.jobTitle }}
-                </div>    
-                <div class="floating-label">
-                    <Field
-                        placeholder="Должность"
-                        type="common"
-                        name="jobTitle"
-                        id="jobTitle"
-                        autocomplete="on"
-                    />
-                    <label for="jobTitle">Должность:</label>
-                    <div class="icon">
-                        <v-icon class="icon_in_center" icon="mdi-account" />
-                    </div>
+            <div class="style_error_messege">
+                {{ errors.second_password }}
+            </div>
+            <div class="floating-label">
+                <Field
+                    placeholder="Пароль ещё раз"
+                    type="password"
+                    name="second_password"
+                    id="second_password"
+                    autocomplete="off"
+                />
+                <label for="second_password">Пароль:</label>
+                <div class="icon">
+                    <IconLock />
                 </div>
+            </div>
 
-                <div class="style_error_messege">
-                        {{ errors.first_password }}
-                </div>    
-                <div class="floating-label">
-                    <Field
-                        placeholder="Пароль"
-                        type="password"
-                        name="first_password"
-                        id="first_password"
-                        autocomplete="off"
-                    />
-                    <label for="first_password">Пароль:</label>
-                    <div class="icon">
-                        <v-icon class="icon_in_center" icon="mdi-lock-outline" />
-                    </div>
-                </div>
+            <div class="group">
+                <button type="submit">Отправить</button>
+            </div>
 
-                <div class="style_error_messege">
-                        {{ errors.second_password }}
-                </div>    
-                <div class="floating-label">
-                    <Field
-                        placeholder="Пароль ещё раз"
-                        type="password"
-                        name="second_password"
-                        id="second_password"
-                        autocomplete="off"
-                    />
-                    <label for="second_password">Пароль:</label>
-                    <div class="icon">
-                        <v-icon class="icon_in_center" icon="mdi-lock-outline" />
-                    </div>
-                </div>
-
-                <div class="group">
-                    <button type="submit">Отправить</button>
-                </div>
-
-                <RouterLink class="link-button" to="/auth/login">
-                    <button>К входу</button>
-                </RouterLink>
-                <a href="" class="discrete" target="_blank">Помощь</a>
-            </Form>
-        </div>
+            <RouterLink class="link-button" to="/auth/login">
+                <button>К входу</button>
+            </RouterLink>
+            <a href="" class="discrete" target="_blank">Помощь</a>
+        </Form>
     </div>
 </template>
 
@@ -275,7 +268,7 @@ Form {
     }
 }
 
-.style_error_messege{
+.style_error_messege {
     width: 100%;
     background-color: orange;
 }
@@ -322,7 +315,7 @@ Form {
     }
     .icon {
         position: absolute;
-        top: 1cm;
+        top: 0;
         left: 0;
         height: 56px;
         width: 44px;
@@ -337,18 +330,14 @@ Form {
                 transition: all 0.3s ease;
             }
         }
-
-        i {
-            height: 0;
-        }
     }
 
-    .icon_in_center{
-            position:relative;
-			left:0px;
-			top:50%;
-			transform:translateY(-50%);
-            background-color: green;
+    .icon_in_center {
+        position: relative;
+        left: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: green;
     }
 }
 .register-container {
@@ -360,5 +349,27 @@ Form {
 .register {
     align-items: center;
     align-self: center;
+}
+
+$displacement: 3px;
+@keyframes shake-shake {
+    0% {
+        transform: translateX(-$displacement);
+    }
+    20% {
+        transform: translateX($displacement);
+    }
+    40% {
+        transform: translateX(-$displacement);
+    }
+    60% {
+        transform: translateX($displacement);
+    }
+    80% {
+        transform: translateX(-$displacement);
+    }
+    100% {
+        transform: translateX(0px);
+    }
 }
 </style>
