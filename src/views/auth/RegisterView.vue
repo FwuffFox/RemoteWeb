@@ -5,7 +5,7 @@ import { useAlertStore } from "@/stores/alert.store";
 import router from "@/router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
-import { IconPeople, IconLock} from "@/components/icons";
+import { IconPeople, IconLock } from "@/components/icons";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
@@ -28,8 +28,7 @@ async function invalidSubmit(error_date: any) {
 }
 
 const schema = Yup.object().shape({
-    username: Yup.string()
-        .min(2, "Введите имя пользователя\n"),
+    username: Yup.string().min(2, "Введите имя пользователя\n"),
 
     fullName: Yup.string().required("Введите ваше полное имя\n"),
 
@@ -59,7 +58,7 @@ watch(username, (newValue, oldValue) => {
 <template>
     <div class="session d-flex">
         <div class="left" />
-        <div class="register-container">
+        <div class="register-container overflow-auto">
             <Form
                 class="register w-75"
                 @submit="onSubmit"
@@ -70,8 +69,8 @@ watch(username, (newValue, oldValue) => {
                 <h4>Регистрация</h4>
 
                 <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
-                        alertStore.alert?.message
-                    }}</v-alert>
+                    alertStore.alert?.message
+                }}</v-alert>
 
                 <div class="floating-label">
                     <Field

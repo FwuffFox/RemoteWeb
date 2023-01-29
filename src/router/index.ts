@@ -5,8 +5,13 @@ export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/:",
-            name: "messenger",
+            path: "/",
+            name: "home",
+            component: () => import("@/views/MessengerView.vue"),
+        },
+        {
+            path: "/:chatName",
+            name: "chat",
             component: () => import("@/views/MessengerView.vue"),
         },
         {

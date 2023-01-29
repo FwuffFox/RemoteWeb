@@ -5,6 +5,7 @@ import { ref, computed, onBeforeMount, onBeforeUnmount } from "vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
+import { useRoute } from "vue-router";
 
 const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
@@ -24,6 +25,7 @@ async function sendMessage() {
     await messengerStore.send(input.value);
     input.value = "";
 }
+const route = useRoute();
 
 const isLoading = computed(() => !messengerStore.isConnected);
 </script>
@@ -37,7 +39,7 @@ const isLoading = computed(() => !messengerStore.isConnected);
             <MessengerSidebar />
             <div id="main-content">
                 <div class="header">
-                    <h5>Название чата</h5>
+                    <h5>{{ route.params.chatName }}</h5>
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
