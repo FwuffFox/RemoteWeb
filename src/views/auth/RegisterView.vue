@@ -1,40 +1,23 @@
 <script setup lang="ts">
-import { Field, Form } from "vee-validate";
+import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import { storeToRefs } from "pinia";
+import router from "@/router";
 import * as Yup from "yup";
+import { Field, Form, configure } from "vee-validate";
+import { stringifyExpression } from "@vue/compiler-core";
+
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
-const { alert } = storeToRefs(alertStore);
 
-function foo(str: string) {
-    return str && str[0] == "@";
+if (authStore.isLoggedIn) {
+    router.push("/");
 }
 
-const schema = Yup.object().shape({
-    username: Yup.string()
-        .min(2, "-Введите имя пользователя<br>")
-        .test(
-            "username",
-            "-Имя пользователя должно начинаться с '@'\n",
-            (str: string) => str && str[0] == "@"
-        ),
-
-    fullName: Yup.string().required("-Введите ваше полное имя\n"),
-
-    jobTitle: Yup.string().required("-Введите вашу должность\n"),
-
-    first_password: Yup.string()
-        .required("-Длина пароля должна быть не меньше 8 символов\n")
-        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
-
-    seccond_password: Yup.string().oneOf([Yup.ref("first_password"), null], "-Пароли не совпадают\n"),
-});
-
 async function onSubmit(values: any) {
-    alertStore.clear();
+    alertStore.clear()
 
     const { username, first_password, fullName, jobTitle } = values;
     console.debug("register in with values:", values);
@@ -43,36 +26,54 @@ async function onSubmit(values: any) {
 }
 
 async function invalidSubmit(error_date: any) {
-    alertStore.clear();
-
-    const { username, first_password, fullName, jobTitle } = error_date.errors;
-    console.debug(error_date);
-
-    alertStore.error(username + fullName + jobTitle + first_password);
+    alertStore.clear()
 }
 
-async function attempt_to_send() {
-    alertStore.clear();
+const schema = Yup.object().shape({
+    username: Yup.string()
+    .min(2, "-Введите имя пользователя\n")
+    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
+    
+    fullName: Yup.string().required("-Введите ваше полное имя\n"),
 
-    //console.debug("Sent to registration:", input_date);
-    //await authStore.register(input_date.username, input_date.first_password, input_date.fullName, input_date.jobTitle);
-}
+    jobTitle: Yup.string().required("-Введите вашу должность\n"),
+
+    first_password: Yup.string()
+        .required("-Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        
+    second_password: Yup.string()
+    .oneOf([Yup.ref("first_password"), undefined], "-Пароли не совпадают\n"),
+});
+
+configure({
+  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+});
+
 </script>
 
 <template>
     <div class="session">
         <div class="left" />
-        <div class="register-container">
-            <Form
-                class="register"
+
+            <Form class="register"
                 @submit="onSubmit"
                 @invalid-submit="invalidSubmit"
                 :validation-schema="schema"
+                v-slot="{ errors }"
             >
+                    
                 <h4>Регистрация</h4>
 
-                <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
-
+                <v-alert v-if="alertStore.alert?.message" type="error" variant="flat">{{
+                    alertStore.alert?.message
+                }}</v-alert>
+                <div class="style_error_messege">
+                        {{ errors.username }}
+                </div>   
                 <div class="floating-label">
                     <Field
                         placeholder="Имя пользователя"
@@ -80,12 +81,16 @@ async function attempt_to_send() {
                         name="username"
                         id="username"
                         autocomplete="on"
-                    />
+                    />  
                     <label for="username">Имя Пользователя:</label>
                     <div class="icon">
-                        <v-icon icon="mdi-account" />
+                        <v-icon class="icon_in_center" icon="mdi-account" />
                     </div>
-                </div>
+                </div>      
+
+                <div class="style_error_messege">
+                        {{ errors.fullName }}
+                </div>         
                 <div class="floating-label">
                     <Field
                         placeholder="Фамилия Имя Отчество"
@@ -96,9 +101,13 @@ async function attempt_to_send() {
                     />
                     <label for="fullName">Фамилия Имя Отчество:</label>
                     <div class="icon">
-                        <v-icon icon="mdi-account" />
+                        <v-icon class="icon_in_center" icon="mdi-account" />
                     </div>
                 </div>
+
+                <div class="style_error_messege">
+                        {{ errors.jobTitle }}
+                </div>    
                 <div class="floating-label">
                     <Field
                         placeholder="Должность"
@@ -109,9 +118,13 @@ async function attempt_to_send() {
                     />
                     <label for="jobTitle">Должность:</label>
                     <div class="icon">
-                        <v-icon icon="mdi-account" />
+                        <v-icon class="icon_in_center" icon="mdi-account" />
                     </div>
                 </div>
+
+                <div class="style_error_messege">
+                        {{ errors.first_password }}
+                </div>    
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль"
@@ -122,9 +135,13 @@ async function attempt_to_send() {
                     />
                     <label for="first_password">Пароль:</label>
                     <div class="icon">
-                        <v-icon icon="mdi-lock-outline" />
+                        <v-icon class="icon_in_center" icon="mdi-lock-outline" />
                     </div>
                 </div>
+
+                <div class="style_error_messege">
+                        {{ errors.second_password }}
+                </div>    
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль ещё раз"
@@ -135,7 +152,7 @@ async function attempt_to_send() {
                     />
                     <label for="second_password">Пароль:</label>
                     <div class="icon">
-                        <v-icon icon="mdi-lock-outline" />
+                        <v-icon class="icon_in_center" icon="mdi-lock-outline" />
                     </div>
                 </div>
 
@@ -238,7 +255,7 @@ Form {
     flex-direction: column;
     align-items: flex-start;
     padding: 40px 30px 20px;
-    width: 300px;
+    width: 50%;
     h4 {
         margin-bottom: 20px;
         color: rgba($primary, 0.5);
@@ -256,6 +273,11 @@ Form {
         max-width: 200px;
         margin-bottom: 40px;
     }
+}
+
+.style_error_messege{
+    width: 100%;
+    background-color: orange;
 }
 .floating-label {
     position: relative;
@@ -319,6 +341,14 @@ Form {
         i {
             height: 0;
         }
+    }
+
+    .icon_in_center{
+            position:relative;
+			left:0px;
+			top:50%;
+			transform:translateY(-50%);
+            background-color: green;
     }
 }
 .register-container {

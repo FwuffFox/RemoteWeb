@@ -4,7 +4,8 @@ import IconLock from "@/components/icons/IconLock.vue";
 
 import { RouterLink } from "vue-router";
 import * as Yup from "yup";
-import { Field, Form, ErrorMessage } from "vee-validate";
+import { Field, Form, configure } from "vee-validate";
+
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
@@ -22,13 +23,10 @@ onBeforeMount(() => {
     }
 });
 
-const schema = Yup.object().shape({
-    username: Yup.string().required("Необходимо имя пользователя."),
-    password: Yup.string().required("Необходим пароль."),
-});
 
 async function onSubmit(values: any) {
     alertStore.clear();
+
     const { username, password } = values;
     console.debug("logging in with values:", values);
     await useAuthStore().login(username, password);
@@ -37,6 +35,23 @@ async function onSubmit(values: any) {
 async function invalidSubmit(values: any) {
     alertStore.clear();
 }
+
+const schema = Yup.object().shape({
+    username: Yup.string()
+    .min(2, "-Введите имя пользователя\n")
+    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
+
+    password: Yup.string()
+    .required("-Длина пароля должна быть не меньше 8 символов\n")
+    .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+});
+
+configure({
+  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+});
 
 const username = ref("");
 watch(username, (newValue, oldValue) => {
@@ -52,15 +67,22 @@ const password = ref("");
     <div class="session">
         <div class="left" />
         <div class="login-container">
-            <Form
+            <Form class="log-in"
                 @submit="onSubmit"
                 @invalid-submit="invalidSubmit"
                 :validation-schema="schema"
-                class="log-in"
+                v-slot="{ errors }"
             >
                 <h4>Мы <span>Remote</span></h4>
                 <p>Добро пожаловать!</p>
-                <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
+
+                <v-alert v-if="alert" type="error" variant="flat">{{
+                    alert?.message
+                }}</v-alert>
+
+                <div class="style_error_messege">
+                        {{ errors.username }}
+                </div> 
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"
@@ -76,6 +98,9 @@ const password = ref("");
                     </div>
                     <ErrorMessage name="username"/>
                 </div>
+                <div class="style_error_messege">
+                        {{ errors.password }}
+                </div> 
                 <div class="floating-label">
                     <Field
                         placeholder="Пароль"
@@ -89,6 +114,7 @@ const password = ref("");
                         <IconLock />
                     </div>
                 </div>
+
                 <button type="submit">Войти</button>
                 <RouterLink class="link-button" to="/auth/register">
                     <button>К регистрации</button>
@@ -157,6 +183,11 @@ form {
         max-width: 200px;
         margin-bottom: 40px;
     }
+}
+
+.style_error_messege{
+    width: 100%;
+    background-color: orange;
 }
 .link-button {
     &:hover {

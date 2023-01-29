@@ -4,6 +4,7 @@ enum AlertType {
     Error,
     Warning,
     Success,
+    Info,
 }
 
 class Alert {
@@ -25,6 +26,9 @@ export const useAlertStore = defineStore({
         success(message: string) {
             this.alert = new Alert(message, AlertType.Success);
         },
+        warning(message: string) {
+            this.alert = new Alert(message, AlertType.Warning);
+        },
         error(message: string) {
             this.alert = new Alert(message, AlertType.Error);
         },
@@ -34,3 +38,5 @@ export const useAlertStore = defineStore({
         },
     },
 });
+
+
