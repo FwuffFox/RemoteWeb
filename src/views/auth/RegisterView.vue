@@ -1,39 +1,36 @@
 <script setup lang="ts">
 import { Field, Form } from "vee-validate";
-import { ref } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import { storeToRefs } from "pinia";
 import * as Yup from "yup";
-import { stringifyExpression } from "@vue/compiler-core";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-function foo(str: string){
-    return str && str[0] == '@';
+function foo(str: string) {
+    return str && str[0] == "@";
 }
-
-
 
 const schema = Yup.object().shape({
     username: Yup.string()
-    .min(2, "-Введите имя пользователя<br>")
-    .test("username", "-Имя пользователя должно начинаться с \'@\'\n", (str: string)=>str && str[0] == '@'),
+        .min(2, "-Введите имя пользователя<br>")
+        .test(
+            "username",
+            "-Имя пользователя должно начинаться с '@'\n",
+            (str: string) => str && str[0] == "@"
+        ),
 
-    fullName: Yup.string()
-    .required("-Введите ваше полное имя\n"),
-    
-    jobTitle: Yup.string()
-    .required("-Введите вашу должность\n"),
+    fullName: Yup.string().required("-Введите ваше полное имя\n"),
+
+    jobTitle: Yup.string().required("-Введите вашу должность\n"),
 
     first_password: Yup.string()
-    .required("-Длина пароля должна быть не меньше 8 символов\n")
-    .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
+        .required("-Длина пароля должна быть не меньше 8 символов\n")
+        .min(8, "-Длина пароля должна быть не меньше 8 символов\n"),
 
-    seccond_password: Yup.string()
-    .oneOf([Yup.ref("first_password"), null], "-Пароли не совпадают\n"),
+    seccond_password: Yup.string().oneOf([Yup.ref("first_password"), null], "-Пароли не совпадают\n"),
 });
 
 async function onSubmit(values: any) {
@@ -48,17 +45,14 @@ async function onSubmit(values: any) {
 async function invalidSubmit(error_date: any) {
     alertStore.clear();
 
-    const {username, first_password, fullName, jobTitle} = error_date.errors;
+    const { username, first_password, fullName, jobTitle } = error_date.errors;
     console.debug(error_date);
 
     alertStore.error(username + fullName + jobTitle + first_password);
 }
 
-
-
 async function attempt_to_send() {
     alertStore.clear();
-
 
     //console.debug("Sent to registration:", input_date);
     //await authStore.register(input_date.username, input_date.first_password, input_date.fullName, input_date.jobTitle);
@@ -69,13 +63,15 @@ async function attempt_to_send() {
     <div class="session">
         <div class="left" />
         <div class="register-container">
-            <Form class="register" @submit="onSubmit" @invalid-submit="invalidSubmit" :validation-schema="schema">
-
+            <Form
+                class="register"
+                @submit="onSubmit"
+                @invalid-submit="invalidSubmit"
+                :validation-schema="schema"
+            >
                 <h4>Регистрация</h4>
 
-                <v-alert v-if="alert" type="error" variant="flat">{{
-                    alert?.message
-                }}</v-alert>
+                <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
 
                 <div class="floating-label">
                     <Field
@@ -89,7 +85,7 @@ async function attempt_to_send() {
                     <div class="icon">
                         <v-icon icon="mdi-account" />
                     </div>
-                </div>              
+                </div>
                 <div class="floating-label">
                     <Field
                         placeholder="Фамилия Имя Отчество"
@@ -141,7 +137,7 @@ async function attempt_to_send() {
                     <div class="icon">
                         <v-icon icon="mdi-lock-outline" />
                     </div>
-                </div> 
+                </div>
 
                 <div class="group">
                     <button type="submit">Отправить</button>
@@ -151,13 +147,10 @@ async function attempt_to_send() {
                     <button>К входу</button>
                 </RouterLink>
                 <a href="" class="discrete" target="_blank">Помощь</a>
-
             </Form>
         </div>
     </div>
 </template>
-
-
 
 <style scoped lang="scss">
 @use "../../assets/colors.scss" as colors;
@@ -306,8 +299,8 @@ Form {
         }
     }
     .icon {
-        position:absolute;
-        top:1cm;
+        position: absolute;
+        top: 1cm;
         left: 0;
         height: 56px;
         width: 44px;

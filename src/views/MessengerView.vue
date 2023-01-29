@@ -1,31 +1,26 @@
-<script async setup lang="ts">
-import { useAuthStore } from "@/stores/auth.store";
+<script setup lang="ts">
 import { storeToRefs } from "pinia";
-import LogoutButton from "@/components/LogoutButton.vue";
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, onBeforeMount, onBeforeUnmount } from "vue";
 
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 
-const auth = useAuthStore();
-const { user } = storeToRefs(auth);
-
 const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
-onMounted(async () => {
+onBeforeMount(async () => {
     await messengerStore.connect();
 });
 
-onUnmounted(async () => {
+onBeforeUnmount(async () => {
     await messengerStore.disconnect();
 });
 
 const input = ref("");
 
 async function sendMessage() {
-    if (!messengerStore.isConnected) return;
+    if (!messengerStore.isConnected || input.value.length == 0) return;
     await messengerStore.send(input.value);
     input.value = "";
 }
@@ -47,7 +42,7 @@ const isLoading = computed(() => !messengerStore.isConnected);
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
                         <li v-for="message in messages" :key="message.body">
-                            <TextMessage message="message" />
+                            <TextMessage :message="message" />
                         </li>
                     </ul>
                 </div>

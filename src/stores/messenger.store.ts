@@ -6,8 +6,6 @@ import { useAuthStore } from "./auth.store";
 const authStore = useAuthStore();
 const { user } = authStore;
 
-const BASE_URL = `${window.location.origin}/api`;
-
 export const useMessengerStore = defineStore({
     id: "messenger",
     state: () => ({
@@ -35,9 +33,7 @@ export const useMessengerStore = defineStore({
             });
 
             this.connection.on("OnConnect", (messages: IMessage[]) => {
-                console.debug(messages);
                 this.messages = messages;
-                console.log(this.messages);
             });
 
             const start = async () => {

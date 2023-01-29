@@ -16,13 +16,50 @@ const { user } = storeToRefs(useAuthStore());
                 <v-avatar class="me-2" size="50" color="blue">
                     <span>CJ</span>
                 </v-avatar>
-                <a v-if:="user">{{ user.fullName.split(" ")[1] }}</a>
+                <a v-if:="user">{{ user?.fullName.split(" ")[1] }}</a>
             </div>
             <LogoutButton />
         </div>
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: orange;
+    color: white;
 
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 50px;
+        padding: 20px;
+
+        h5 {
+            font-size: 20px;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin: 0;
+        }
+    }
+
+    .profile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.1);
+        margin-top: auto;
+
+        a {
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+    }
+}
 </style>

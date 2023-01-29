@@ -4,19 +4,23 @@ import IconLock from "@/components/icons/IconLock.vue";
 
 import { RouterLink } from "vue-router";
 import * as Yup from "yup";
-import { Field, Form } from "vee-validate";
+import { Field, Form, ErrorMessage } from "vee-validate";
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
+import { onBeforeMount, ref, watch } from "vue";
 
-const authStore = useAuthStore();
+
 const alertStore = useAlertStore();
 const { alert } = storeToRefs(alertStore);
 
-if (authStore.user) {
-    router.push("/");
-}
+onBeforeMount(() => {
+    const authStore = useAuthStore();
+    if (authStore.isLoggedIn) {
+        router.push("/");
+    }
+});
 
 const schema = Yup.object().shape({
     username: Yup.string().required("Необходимо имя пользователя."),
@@ -27,12 +31,21 @@ async function onSubmit(values: any) {
     alertStore.clear();
     const { username, password } = values;
     console.debug("logging in with values:", values);
-    await authStore.login(username, password);
+    await useAuthStore().login(username, password);
 }
 
 async function invalidSubmit(values: any) {
     alertStore.clear();
 }
+
+const username = ref("");
+watch(username, (newValue, oldValue) => {
+    newValue = newValue.trim();
+    if (!newValue.startsWith("@")) newValue = "@" + newValue;
+    username.value = newValue;
+});
+
+const password = ref("");
 </script>
 
 <template>
@@ -47,12 +60,11 @@ async function invalidSubmit(values: any) {
             >
                 <h4>Мы <span>Remote</span></h4>
                 <p>Добро пожаловать!</p>
-                <v-alert v-if="alert" type="error" variant="flat">{{
-                    alert?.message
-                }}</v-alert>
+                <v-alert v-if="alert" type="error" variant="flat">{{ alert?.message }}</v-alert>
                 <div class="floating-label">
                     <Field
                         placeholder="Имя Пользователя"
+                        v-model="username"
                         type="username"
                         name="username"
                         id="username"
@@ -62,6 +74,7 @@ async function invalidSubmit(values: any) {
                     <div class="icon">
                         <IconEmail />
                     </div>
+                    <ErrorMessage name="username"/>
                 </div>
                 <div class="floating-label">
                     <Field
@@ -90,8 +103,7 @@ async function invalidSubmit(values: any) {
 @use "../../assets/colors.scss" as colors;
 @use "../../assets/main.scss" as main;
 * {
-    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica,
-        Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica, Arial, sans-serif;
     font-weight: 300;
     margin: 0;
 }

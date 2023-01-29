@@ -33,14 +33,14 @@ export const useAuthStore = defineStore({
             this.returnUrl = null;
         },
 
-        async register(username: string, password: string, fullName: string, jobTitle: string){
+        async register(username: string, password: string, fullName: string, jobTitle: string) {
             this.token = await fetchWrapper.post<string>(BASE_URL + "/auth/register", {
                 username: username,
                 password: password,
                 fullName: fullName,
                 jobTitle: jobTitle,
             });
-            
+
             console.debug("token is: ", this.token);
             console.debug({
                 username: username,

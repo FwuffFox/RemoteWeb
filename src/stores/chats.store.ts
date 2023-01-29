@@ -4,7 +4,6 @@ import { useAuthStore } from "@/stores/auth.store";
 import type { IPrivateChat } from "@/models/IPrivateChat";
 import type { IPrivateMessage } from "@/models/IPrivateMessage";
 
-
 export const useChatsStore = defineStore({
     id: "chats",
     state: () => ({
@@ -21,13 +20,11 @@ export const useChatsStore = defineStore({
                 .configureLogging(LogLevel.Information)
                 .build();
 
-            this.connection.on("OnConnect", (chats: IPrivateChat[]) => {
+            this.connection.on("OnConnect", (chats: IPrivateChat[]) => {});
 
-            });
+            this.connection.on("OnNewMessage", (message: IPrivateMessage) => {});
 
-            this.connection.on("OnNewMessage", (message: IPrivateMessage) => {
-
-            });
-        }
-    }
-})
+            this.connection.on("OnNewChatCreate", (chat: IPrivateChat) => {});
+        },
+    },
+});
