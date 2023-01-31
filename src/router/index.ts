@@ -10,11 +10,6 @@ export const router = createRouter({
             component: () => import("@/views/MessengerView.vue"),
         },
         {
-            path: "/:chatName",
-            name: "chat",
-            component: () => import("@/views/MessengerView.vue"),
-        },
-        {
             path: "/auth/login",
             name: "login",
             component: () => import("@/views/auth/LoginView.vue"),
@@ -28,6 +23,11 @@ export const router = createRouter({
             path: "/error/500",
             name: "internal_server_error",
             component: () => import("@/views/error_pages/Error500View.vue"),
+        },
+        {
+            path: "/:chatName",
+            name: "chat",
+            component: () => import("@/views/MessengerView.vue"),
         },
         {
             path: "/:pathMatch(.*)*", // Not existing paths
