@@ -7,7 +7,7 @@ import type { IPrivateMessage } from "@/models/IPrivateMessage";
 export const useChatsStore = defineStore({
     id: "chats",
     state: () => ({
-        chats: [],
+        chats: [] as IPrivateChat[],
         connection: null as signalR.HubConnection | null,
     }),
     actions: {
@@ -20,11 +20,17 @@ export const useChatsStore = defineStore({
                 .configureLogging(LogLevel.Information)
                 .build();
 
-            this.connection.on("OnConnect", (chats: IPrivateChat[]) => {});
+            this.connection.on("OnConnect", (chats: IPrivateChat[]) => {
+                this.chats = chats;
+            });
 
-            this.connection.on("OnNewMessage", (message: IPrivateMessage) => {});
+            this.connection.on("OnNewMessage", (message: IPrivateMessage) => {
+                // Запушить сообщение в существующий чат.
+            });
 
-            this.connection.on("OnNewChatCreate", (chat: IPrivateChat) => {});
+            this.connection.on("OnNewChatCreate", (chat: IPrivateChat) => {
+                this.chats.push(chat);
+            });
         },
     },
 });

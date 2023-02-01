@@ -1,10 +1,8 @@
-import { defineStore, storeToRefs } from "pinia";
+import { defineStore } from "pinia";
 import type { IMessage } from "@/models/IMessage";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
 
-const authStore = useAuthStore();
-const { user } = storeToRefs(authStore);
 
 export const useMessengerStore = defineStore({
     id: "messenger",
@@ -41,9 +39,9 @@ export const useMessengerStore = defineStore({
                 console.log("SignalR connected");
             };
 
-            /*this.connection.onclose(async () => {
+            this.connection.onclose(async () => {
                 await start();
-            });*/
+            });
 
             await start();
         },

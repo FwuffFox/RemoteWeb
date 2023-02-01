@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import router from "@/router";
@@ -10,9 +10,12 @@ import { IconPeople, IconLock } from "@/components/icons";
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
 
-if (authStore.isLoggedIn) {
-    router.push("/");
-}
+onBeforeMount(() => {
+    const authStore = useAuthStore();
+    if (authStore.isLoggedIn) {
+        router.push("/");
+    }
+});
 
 async function onSubmit(values: any) {
     alertStore.clear();
