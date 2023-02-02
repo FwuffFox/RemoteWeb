@@ -3,7 +3,7 @@ import { useAlertStore } from "@/stores/alert.store";
 import { useAuthStore } from "@/stores/auth.store";
 import axios from "axios";
 
-export const fetchWrapper = {
+export const fetchWrapperService = {
     get: get,
     post: post,
 };

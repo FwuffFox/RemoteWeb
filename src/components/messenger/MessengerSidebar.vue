@@ -3,22 +3,13 @@ import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
 import { onBeforeMount, type Ref } from "vue";
-import type { IUser } from "@/models/IUser";
+import type { User } from "@/models/User";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
-import type { IPrivateChat } from "@/models/IPrivateChat";
 
-let user: Ref<IUser>;
+let user: Ref<User>;
 onBeforeMount(() => {
-    user = storeToRefs(useAuthStore()).user as Ref<IUser>;
+    user = storeToRefs(useAuthStore()).user as Ref<User>;
 });
-
-const fakeChat1 = {
-    users: [{username: "@test1"}, {username: "@admin"}]
-} as IPrivateChat
-
-const fakeChat2 = {
-    users: [{username: "@admin"}, {username: "@test2"}]
-} as IPrivateChat
 
 </script>
 
@@ -28,8 +19,6 @@ const fakeChat2 = {
             <h5>Чаты</h5>
         </div>
         <div class="overflow-y-auto list-unstyled">
-            <ChatSelectButton :chat="fakeChat1" />
-            <ChatSelectButton :chat="fakeChat2" />
         </div>
         <div class="profile">
             <div class="d-flex align-items-center flex-grow-1">

@@ -1,13 +1,12 @@
 import { defineStore } from "pinia";
-import type { IMessage } from "@/models/IMessage";
+import type { Message } from "@/models/Message";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
-
 
 export const useMessengerStore = defineStore({
     id: "messenger",
     state: () => ({
-        messages: [] as IMessage[],
+        messages: [] as Message[],
         connection: null as signalR.HubConnection | null,
     }),
     getters: {
@@ -25,12 +24,12 @@ export const useMessengerStore = defineStore({
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-            this.connection.on("OnReceiveMessage", (message: IMessage) => {
+            this.connection.on("OnReceiveMessage", (message: Message) => {
                 console.debug(message);
                 this.messages.push(message);
             });
 
-            this.connection.on("OnConnect", (messages: IMessage[]) => {
+            this.connection.on("OnConnect", (messages: Message[]) => {
                 this.messages = messages;
             });
 

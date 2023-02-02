@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { IMessage } from "@/models/IMessage";
+import type { Message } from "@/models/Message";
 import { useAuthStore } from "@/stores/auth.store";
 
 defineProps<{
-    message: IMessage;
+    message: Message;
 }>();
 
-const { user } = useAuthStore();
+const user = useAuthStore().getUser;
 </script>
 
 <template>
