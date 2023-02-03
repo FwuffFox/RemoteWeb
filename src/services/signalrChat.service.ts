@@ -1,12 +1,22 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
 import type { PrivateChat } from "@/models/PrivateChat";
-import type { PrivateMessage } from "@/models/PrivateMessage";
+import type { ChatMessage } from "@/models/ChatMessage";
 import { reactive, ref } from "vue";
+import type { User } from "@/models";
+export type ChatInfo = {
+    user: User;
+    messagesFromMe: ChatMessage[];
+    messagesToMe: ChatMessage[];
+};
 
+export type MessageWithSender = {
+    sender: User;
+    message: ChatMessage;
+};
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: PrivateChat[] = [];
+    public chats: any;
 
     constructor() {
         this.createConnection();
@@ -25,17 +35,11 @@ export class SignalrChatService {
     }
 
     private registerOnServerEvents() {
-        this.hubConnection.on("OnConnect", (chats: PrivateChat[]) => {
-            this.chats = chats;
+        this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
+            //
         });
 
-        this.hubConnection.on("OnNewMessage", (message: PrivateMessage) => {
-            this.chats.find((chat) => message.sender.username === chat.name)?.messages?.push(message);
-        });
-
-        this.hubConnection.on("OnNewChatCreate", (chat: PrivateChat) => {
-            this.chats.push(chat);
-        });
+        this.hubConnection.on("OnGetMessage", (message: MessageWithSender) => {});
     }
 
     private startConnection() {
@@ -50,5 +54,9 @@ export class SignalrChatService {
 
     public async sendMessage(messageBody: string, chatName: string) {
         await this.hubConnection.invoke("SendMessage", messageBody, chatName);
+    }
+
+    public async getChatInfo(chatName: string) {
+        const chatInfo = await this.hubConnection.invoke<ChatInfo>("GetChatInfo", chatName);
     }
 }

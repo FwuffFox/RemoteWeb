@@ -1,6 +1,6 @@
-import type { PrivateMessage } from "@/models";
+import type { ChatMessage } from "@/models";
 
 export interface PrivateChat {
     name?: string;
-    messages?: PrivateMessage[];
+    messages?: ChatMessage[];
 }
