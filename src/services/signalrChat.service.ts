@@ -1,8 +1,6 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
-import type { PrivateChat } from "@/models/PrivateChat";
 import type { ChatMessage } from "@/models/ChatMessage";
-import { reactive, ref } from "vue";
 import type { User } from "@/models";
 export type ChatInfo = {
     user: User;
@@ -16,7 +14,7 @@ export type MessageWithSender = {
 };
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: any;
+    public chats: any; // TODO: Структура что-бы хранить чаты.
 
     constructor() {
         this.createConnection();
@@ -36,10 +34,12 @@ export class SignalrChatService {
 
     private registerOnServerEvents() {
         this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
-            //
+            // TODO: Распаковка чатов при соединении.
         });
 
-        this.hubConnection.on("OnGetMessage", (message: MessageWithSender) => {});
+        this.hubConnection.on("OnGetMessage", (message: MessageWithSender) => {
+            // TODO: Добавление сообщения.
+        });
     }
 
     private startConnection() {
