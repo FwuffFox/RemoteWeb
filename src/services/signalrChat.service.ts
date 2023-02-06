@@ -1,7 +1,7 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
-import type { ChatMessage } from "@/models/ChatMessage";
-import type { User } from "@/models";
+import type { User, ChatMessage, Message } from "@/models";
+
 export type ChatInfo = {
     user: User;
     messagesFromMe: ChatMessage[];
@@ -14,9 +14,10 @@ export type MessageWithSender = {
 };
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: any; // TODO: Структура что-бы хранить чаты.
+    public chats: Map<string, Message[]>; // TODO: Структура что-бы хранить чаты.
 
     constructor() {
+        this.chats = new Map<string, Message[]>();
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();
@@ -58,5 +59,9 @@ export class SignalrChatService {
 
     public async getChatInfo(chatName: string) {
         const chatInfo = await this.hubConnection.invoke<ChatInfo>("GetChatInfo", chatName);
+    }
+
+    public disconnect() {
+        this.hubConnection?.stop();
     }
 }

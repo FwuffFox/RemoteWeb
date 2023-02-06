@@ -27,7 +27,7 @@ async function sendMessage() {
 }
 const route = useRoute();
 
-const isLoading = computed(() => !messengerStore.isConnected);
+const isLoading = messengerStore.isConnected;
 </script>
 
 <template>

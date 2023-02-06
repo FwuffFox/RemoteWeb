@@ -18,7 +18,8 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
-        <div class="overflow-y-auto list-unstyled">
+        <div class="overflow-y-auto list-unstyled" >
+            <!-- TODO: Вывод чатов-->
         </div>
         <div class="profile">
             <div class="d-flex align-items-center flex-grow-1">
