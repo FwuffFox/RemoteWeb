@@ -27,7 +27,7 @@ export const router = createRouter({
         {
             path: "/:chatName",
             name: "chat",
-            component: () => import("@/views/MessengerView.vue"),
+            component: () => import("@/views/ChatView.vue"),
         },
         {
             path: "/:pathMatch(.*)*", // Not existing paths
