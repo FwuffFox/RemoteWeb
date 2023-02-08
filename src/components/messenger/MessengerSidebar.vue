@@ -11,7 +11,7 @@ const ChatStore = useChatStore();
 
 let user: Ref<User>;
 //let chats: Ref<Chat[]>;
-let chats: Chat[] | undefined;
+let chats: Chat[];
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
     chats = ChatStore.getChats;

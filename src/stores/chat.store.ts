@@ -15,8 +15,8 @@ export const useChatStore = defineStore({
         // getChats: (state)/*: Chat[]*/ => {
         //     return state.signal?.chats;
         // },
-        getChats: (state): Chat[] | undefined => {
-            return state.signal?.chats;
+        getChats: (state): Chat[] => {
+            return state.signal?.chats as Chat[];
         },
     },
     actions: {
