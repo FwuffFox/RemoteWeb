@@ -59,6 +59,7 @@ export class SignalrChatService {
                 if(found.interlocutor.username === message.sender.username){
                     found.message.push({body: message.body, sendTime: message.sendTime});
                     this.chats[0] = found;
+                    break;
                 } else{
                     const tmp = this.chats[i];
                     this.chats[i] = found;

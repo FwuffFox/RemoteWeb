@@ -1,4 +1,4 @@
-export type MessageWithoutSender = {
+export interface MessageWithoutSender {
     body: string;
     sendTime: Date;
 }
