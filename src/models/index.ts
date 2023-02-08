@@ -1,4 +1,4 @@
 export * from "./User";
 export * from "./Message";
 export * from "./PrivateChat";
-export * from "./ChatMessage";
+export * from "./MessageWithoutSender";

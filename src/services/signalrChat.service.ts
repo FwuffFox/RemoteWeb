@@ -1,23 +1,21 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
-import { User, ChatMessage, Message } from "@/models";
+import type { User, MessageWithoutSender, Message } from "@/models";
+
+
 
 export type ChatInfo = {
     user: User;
-    messagesFromMe: ChatMessage[];
-    messagesToMe: ChatMessage[];
+    //chat_name: string;   сейчас чат называется как имя собеседника
+    messagesFromMe: MessageWithoutSender[];
+    messagesToMe: MessageWithoutSender[];
 };
 
-export type MessageWithSender = {
-    sender: User;
-    message: ChatMessage;
-};
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: {chat_name: string, message: Message[]}[]; // TODO: Структура что-бы хранить чаты.
+    public chats!: {interlocutor: User, chat_name: string; message: MessageWithoutSender[]; }[]; // TODO: Структура что-бы хранить чаты.
 
     constructor() {
-        this.chats = new Map<string, Message[]>();
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();
@@ -36,24 +34,37 @@ export class SignalrChatService {
     private registerOnServerEvents() {
         this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
             for(var i = 0; i < chats.length; ++i){
-                this.chats.push({chat_name: chats[i].user.fullName, message: [] as Message[]});
-                var form = 0, to = 0
+                this.chats.push({interlocutor: chats[i].user, chat_name: chats[i].user.fullName, message: [] as MessageWithoutSender[]});
+                var from = 0, to = 0
                 var arr_from = chats[i].messagesFromMe, arr_to = chats[i].messagesToMe;
-                while(from < arr_from.length && to < arr_to.length){
-                    if(arr_from[from].sendTime.getTime() < arr_to[to].sendTime.getTime()){
-                        this.chats[i].message.push(arr_from[from].body);
+
+                while(from < arr_from.length || to < arr_to.length){
+                    if(from < arr_from.length && arr_from[from].sendTime.getTime() < arr_to[to].sendTime.getTime()){   // записываем в начале самые давние сообщения
+                        this.chats[i].message.push(arr_from[from]);
                         from++;
                     }else{
-                        this.chats[i].message.push(arr_to[from].body);
+                        this.chats[i].message.push(arr_to[from]);
                         to++;
                     }
-
                 }
             }
             // TODO: Распаковка чатов при соединении.
         });
 
-        this.hubConnection.on("OnGetMessage", (message: MessageWithSender) => {
+        this.hubConnection.on("OnGetMessage", (message: Message) => {
+            message.sender;
+
+            var found = this.chats[0];
+            for(var i = 1; i < this.chats.length; ++i){
+                if(found.interlocutor.username === message.sender.username){
+                    found.message.push({body: message.body, sendTime: message.sendTime});
+                    this.chats[0] = found;
+                } else{
+                    const tmp = this.chats[i];
+                    this.chats[i] = found;
+                    found = tmp;
+                }
+            }
             // TODO: Добавление сообщения.
         });
     }

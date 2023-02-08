@@ -1,6 +1,6 @@
-import type { ChatMessage } from "@/models";
+import type { MessageWithoutSender } from "@/models";
 
 export interface PrivateChat {
     name?: string;
-    messages?: ChatMessage[];
+    messages?: MessageWithoutSender[];
 }
