@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
+import type { Chat } from "@/models";
 
 const chatStore = useChatStore();
 const route = useRoute();
 
+const chat = ref(await chatStore.getChatByUsername(route.params.chatName[0])) as Ref<Chat>;
 // TODO: Сообщения для данного чата.
 
 const input = ref("");
@@ -34,7 +36,7 @@ const isLoading = chatStore.isConnected;
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in messages" :key="message.body">
+                        <li v-for="message in chat.message" :key="message.body">
                             <TextMessage :message="message" />
                         </li>
                     </ul>
