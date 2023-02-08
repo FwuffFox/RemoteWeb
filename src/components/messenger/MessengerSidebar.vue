@@ -15,6 +15,10 @@ let chats: Chat[];
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
     chats = ChatStore.getChats;
+    // console.debug("lenth is ", chats);
+    // for(var i = 0; i < chats.length; ++i){
+    //     console.debug(chats[i]);
+    // }
 });
 </script>
 

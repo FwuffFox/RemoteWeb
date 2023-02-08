@@ -17,16 +17,22 @@ export class SignalrChatService {
 
     constructor() {
         this.chats = new Array(0);
-        // this.chats.push([{interlocutor:
-        //      {
-        //         username: "one",
-        //         fullName: "two",
-        //         jobTitle: "lol",
-        //         role?: "kek",
-        //     },
-        //     chat_name: "chat1",
-        //      message: [] as MessageWithoutSender[]
-        //     }])
+        this.chats.push({interlocutor:
+             {
+                username: "one",
+                fullName: "two",
+                jobTitle: "lol",
+                role: "kek",
+            },
+            chat_name: "chat1",
+             message: [{
+                body: "mess1",
+                sendTime: new Date("2023-02-08T19:13:25.305Z"),
+            },{
+                body: "mess2",
+                sendTime: new Date("2024-02-08T19:13:25.305Z"),
+            }]
+            });
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();
