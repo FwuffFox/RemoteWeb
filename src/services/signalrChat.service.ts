@@ -2,10 +2,10 @@ import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel 
 import { useAuthStore } from "@/stores/auth.store";
 import type { User, MessageWithoutSender, Message, Chat } from "@/models";
 
-
+const AuthStore = useAuthStore();
 
 export type ChatInfo = {
-    user: User;
+    interlocutor: User;
     //chat_name: string;   сейчас чат называется как имя собеседника
     messagesFromMe: MessageWithoutSender[];
     messagesToMe: MessageWithoutSender[];
@@ -26,9 +26,21 @@ export class SignalrChatService {
             },
             chat_name: "chat1",
              message: [{
+                sender: {
+                    username: "one",
+                    fullName: "two",
+                    jobTitle: "lol",
+                    role: "kek",
+                },
                 body: "mess1",
                 sendTime: new Date("2023-02-08T19:13:25.305Z"),
             },{
+                sender: {
+                    username: "one",
+                    fullName: "two",
+                    jobTitle: "lol",
+                    role: "kek",
+                },
                 body: "mess2",
                 sendTime: new Date("2024-02-08T19:13:25.305Z"),
             }]
@@ -52,16 +64,16 @@ export class SignalrChatService {
         this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
             console.debug("OnConnect()");
             for(var i = 0; i < chats.length; ++i){
-                this.chats.push({interlocutor: chats[i].user, chat_name: chats[i].user.fullName, message: [] as MessageWithoutSender[]});
+                this.chats.push({interlocutor: chats[i].interlocutor, chat_name: chats[i].interlocutor.fullName, message: [] as Message[]});
                 var from = 0, to = 0
                 var arr_from = chats[i].messagesFromMe, arr_to = chats[i].messagesToMe;
 
                 while(from < arr_from.length || to < arr_to.length){
                     if(from < arr_from.length && arr_from[from].sendTime.getTime() < arr_to[to].sendTime.getTime()){   // записываем в начале самые давние сообщения
-                        this.chats[i].message.push(arr_from[from]);
-                        from++;
-                    }else{
-                        this.chats[i].message.push(arr_to[from]);
+                        this.chats[i].message.push({body: arr_from[from].body, sendTime: arr_from[from].sendTime, sender: AuthStore.getUser});
+                        from++; 
+                    } else{
+                        this.chats[i].message.push({body: arr_from[to].body, sendTime: arr_from[to].sendTime, sender: chats[to].interlocutor});
                         to++;
                     }
                 }
@@ -75,7 +87,7 @@ export class SignalrChatService {
             var found = this.chats[0];
             for(var i = 1; i < this.chats.length; ++i){
                 if(found.interlocutor.username === message.sender.username){
-                    found.message.push({body: message.body, sendTime: message.sendTime});
+                    found.message.push(message);
                     this.chats[0] = found;
                     break;
                 } else{
