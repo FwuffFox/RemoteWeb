@@ -5,12 +5,24 @@ import { useAuthStore } from "@/stores/auth.store";
 import { onBeforeMount, type Ref } from "vue";
 import type { User } from "@/models/User";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
+import {Message, Message_text} from "@/models/ChatMessage";
+import type {Chat} from "@/models/Chat";
 
 let user: Ref<User>;
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
 });
 
+let chats_list = [] as Chat[];
+
+chats_list.push({});
+chats_list[0].chat_name = "chat_one";
+chats_list[0].messages?.push(new Message_text({username: "name", fullName: "fullname", jobTitle: "job", role: "role" }, new Date("2020-05-12T23:50:21.817Z"), "message1"));
+chats_list[0].messages?.push(new Message_text({username: "name", fullName: "fullname", jobTitle: "job", role: "role" }, new Date("2020-06-12T23:50:21.817Z"), "message2"));
+chats_list.push({});
+chats_list[1].chat_name = "chat_two";
+chats_list[1].messages?.push(new Message_text({username: "name", fullName: "fullname", jobTitle: "job", role: "role" }, new Date("2020-05-12T23:50:21.817Z"), "message1"));
+chats_list[1].messages?.push(new Message_text({username: "name", fullName: "fullname", jobTitle: "job", role: "role" }, new Date("2020-06-12T23:50:21.817Z"), "message2"));
 </script>
 
 <template>
@@ -18,8 +30,13 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
+
         <div class="overflow-y-auto list-unstyled">
+            <li v-for="ch in chats_list">
+                <ChatSelectButton :chat="ch"/>
+            </li>
         </div>
+
         <div class="profile">
             <div class="d-flex align-items-center flex-grow-1">
                 <v-avatar class="me-2" size="50" color="blue">

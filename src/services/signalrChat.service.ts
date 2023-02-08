@@ -1,20 +1,16 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
-import type { ChatMessage } from "@/models/ChatMessage";
-import type { User } from "@/models";
-export type ChatInfo = {
-    user: User;
-    messagesFromMe: ChatMessage[];
-    messagesToMe: ChatMessage[];
+import type { Message, Message_text } from "@/models/ChatMessage";
+import type { Chat, User } from "@/models";
+
+type NewMessage = {
+    chat_name: string;
+    message: Message;
 };
 
-export type MessageWithSender = {
-    sender: User;
-    message: ChatMessage;
-};
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: any; // TODO: Структура что-бы хранить чаты.
+    public chats_list = [] as Chat[]; // TODO: Структура что-бы хранить чаты.
 
     constructor() {
         this.createConnection();
@@ -33,11 +29,16 @@ export class SignalrChatService {
     }
 
     private registerOnServerEvents() {
-        this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
-            // TODO: Распаковка чатов при соединении.
+        this.hubConnection.on("OnConnect", (chats: Chat[]) => {
+            console.debug("All"); // TODO: Распаковка чатов при соединении.
+            
+            this.chats_list = chats;
         });
 
-        this.hubConnection.on("OnGetMessage", (message: MessageWithSender) => {
+        this.hubConnection.on("OnGetMessage", (message: NewMessage) => {
+            console.debug("one");
+
+
             // TODO: Добавление сообщения.
         });
     }
@@ -57,6 +58,6 @@ export class SignalrChatService {
     }
 
     public async getChatInfo(chatName: string) {
-        const chatInfo = await this.hubConnection.invoke<ChatInfo>("GetChatInfo", chatName);
+        const chatInfo = await this.hubConnection.invoke<Chat>("GetChatInfo", chatName);
     }
 }

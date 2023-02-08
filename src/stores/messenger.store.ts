@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
-import type { Message } from "@/models/Message";
+import type { Message } from "@/models/ChatMessage";
 import * as signalR from "@microsoft/signalr";
 import { useAuthStore } from "./auth.store";
+import type {Chat} from "@/models/Chat";
 
 export const useMessengerStore = defineStore({
     id: "messenger",
     state: () => ({
-        messages: [] as Message[],
+        chat: {} as Chat,
         connection: null as signalR.HubConnection | null,
     }),
     getters: {
@@ -25,12 +26,11 @@ export const useMessengerStore = defineStore({
                 .build();
 
             this.connection.on("OnReceiveMessage", (message: Message) => {
-                console.debug(message);
-                this.messages.push(message);
+                this.chat.messages?.push(message)
             });
 
             this.connection.on("OnConnect", (messages: Message[]) => {
-                this.messages = messages;
+                this.chat.messages = messages;
             });
 
             const start = async () => {
@@ -44,6 +44,7 @@ export const useMessengerStore = defineStore({
 
             await start();
         },
+
         async send(message: string) {
             try {
                 await this.connection?.invoke("SendMessage", message);
@@ -51,6 +52,7 @@ export const useMessengerStore = defineStore({
                 console.error(error);
             }
         },
+        
         async disconnect() {
             console.log("Connection disposed");
             await this.connection?.stop();

@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { ref, computed, onBeforeMount, onBeforeUnmount } from "vue";
+    import { storeToRefs } from "pinia";
+    import { reactive, ref, computed, onBeforeMount, onBeforeUnmount } from "vue";
 
-import TextMessage from "@/components/messenger/TextMessage.vue";
-import { useMessengerStore } from "@/stores/messenger.store";
-import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
-import { useRoute } from "vue-router";
+    import TextMessage from "@/components/messenger/TextMessage.vue";
+    import { useMessengerStore } from "@/stores/messenger.store";
+    import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
+    import { useRoute } from "vue-router";
 
-const messengerStore = useMessengerStore();
-const { messages } = storeToRefs(messengerStore);
+    const messengerStore = (useMessengerStore());
 
-onBeforeMount(async () => {
-    await messengerStore.connect();
-});
+    onBeforeMount(async () => {
+        await messengerStore.connect();
+    });
 
-onBeforeUnmount(async () => {
-    await messengerStore.disconnect();
-});
+    onBeforeUnmount(async () => {
+        await messengerStore.disconnect();
+    });
 
-const input = ref("");
+    const input = ref("");
 
-async function sendMessage() {
-    if (!messengerStore.isConnected || input.value.length == 0) return;
-    await messengerStore.send(input.value);
-    input.value = "";
-}
-const route = useRoute();
+    async function sendMessage() {
+        console.debug(input.value);
+        if (!messengerStore.isConnected || input.value.length == 0) return;
+        await messengerStore.send(input.value);
+        input.value = "";
+    }
+    const route = useRoute();
 
-const isLoading = computed(() => !messengerStore.isConnected);
+    const isLoading = computed(() => !messengerStore.isConnected);
 </script>
+
 
 <template>
     <div class="d-block">
@@ -36,15 +37,19 @@ const isLoading = computed(() => !messengerStore.isConnected);
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
+            
             <MessengerSidebar />
+
             <div id="main-content">
                 <div class="header">
                     <h5>{{ route.params.chatName }}</h5>
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in messages" :key="message.body">
-                            <TextMessage :message="message" />
+                        <li v-for="mess in messengerStore.chat.messages">
+                            <div v-if="mess">
+                                <TextMessage :message="mess" />
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -81,6 +86,7 @@ const isLoading = computed(() => !messengerStore.isConnected);
     </div>
 </template>
 
+
 <style lang="scss">
 .v-overlay__content {
     align-items: center;
@@ -95,7 +101,6 @@ const isLoading = computed(() => !messengerStore.isConnected);
         width: 270px;
         min-width: 270px;
     }
-
     #main-content {
         flex-grow: 1;
     }

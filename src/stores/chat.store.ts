@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import type { PrivateChat } from "@/models";
 import { SignalrChatService } from "@/services/signalrChat.service";
 
 export const useChatStore = defineStore({

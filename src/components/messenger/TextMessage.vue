@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Message } from "@/models/Message";
+import type { Message } from "@/models/ChatMessage";
 import { useAuthStore } from "@/stores/auth.store";
 
 defineProps<{
@@ -15,11 +15,12 @@ const user = useAuthStore().getUser;
         :class="{ ismine: user?.username === message.sender?.username }"
     >
         <v-avatar> {{ message.sender?.username.substring(1, 3).toUpperCase() }}</v-avatar>
+        
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
                 <span class="author text-no-wrap">{{ message.sender.username }}</span>
             </div>
-            <div class="content text-break">{{ message.body }}</div>
+            <div class="content text-break">{{ message.get_body }}</div>
         </div>
     </div>
 </template>
