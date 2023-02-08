@@ -17,6 +17,16 @@ export class SignalrChatService {
 
     constructor() {
         this.chats = new Array(0);
+        // this.chats.push([{interlocutor:
+        //      {
+        //         username: "one",
+        //         fullName: "two",
+        //         jobTitle: "lol",
+        //         role?: "kek",
+        //     },
+        //     chat_name: "chat1",
+        //      message: [] as MessageWithoutSender[]
+        //     }])
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();
@@ -34,6 +44,7 @@ export class SignalrChatService {
 
     private registerOnServerEvents() {
         this.hubConnection.on("OnConnect", (chats: ChatInfo[]) => {
+            console.debug("OnConnect()");
             for(var i = 0; i < chats.length; ++i){
                 this.chats.push({interlocutor: chats[i].user, chat_name: chats[i].user.fullName, message: [] as MessageWithoutSender[]});
                 var from = 0, to = 0
@@ -53,7 +64,7 @@ export class SignalrChatService {
         });
 
         this.hubConnection.on("OnGetMessage", (message: Message) => {
-            message.sender;
+            console.debug("OnGetMessage()");
 
             var found = this.chats[0];
             for(var i = 1; i < this.chats.length; ++i){

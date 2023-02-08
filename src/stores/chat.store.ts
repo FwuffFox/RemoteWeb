@@ -28,6 +28,16 @@ export const useChatStore = defineStore({
             await this.signal?.sendMessage(messageBody, chatName);
         },
 
+        async getChatByUsername (username: string) {
+            for(var i = 0; i < (this.signal?.chats as Chat[]).length; ++i){
+                if(this.signal?.chats[i].interlocutor.username === username){
+                    return this.signal.chats[i];
+                }
+                return undefined;
+            }
+            return this.signal
+        },
+
         async disconnect() {
             this.signal?.disconnect();
             this.signal = null;
