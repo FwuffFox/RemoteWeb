@@ -1,6 +1,6 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
-import type { User, MessageWithoutSender, Message } from "@/models";
+import type { User, MessageWithoutSender, Message, Chat } from "@/models";
 
 
 
@@ -13,9 +13,10 @@ export type ChatInfo = {
 
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats!: {interlocutor: User, chat_name: string; message: MessageWithoutSender[]; }[]; // TODO: Структура что-бы хранить чаты.
+    public chats: Chat[]; // TODO: Структура что-бы хранить чаты.
 
     constructor() {
+        this.chats = new Array(0);
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();

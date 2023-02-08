@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { SignalrChatService } from "@/services/signalrChat.service";
 import signalR from "@microsoft/signalr";
-import { string } from "yup";
+import type { User, MessageWithoutSender, Message, Chat } from "@/models";
 
 export const useChatStore = defineStore({
     id: "chat",
@@ -12,13 +12,12 @@ export const useChatStore = defineStore({
         isConnected: (state) => {
             return state.signal?.hubConnection.state == signalR.HubConnectionState.Connected;
         },
-        getChats: (state) => {
-            return null;
-            // TODO: Return chats
+        // getChats: (state)/*: Chat[]*/ => {
+        //     return state.signal?.chats;
+        // },
+        getChats: (state): Chat[] | undefined => {
+            return state.signal?.chats;
         },
-        getChatNames: (state): string[] => {
-            return [];
-        }
     },
     actions: {
         async connect() {

@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
-import { useAuthStore } from "@/stores/auth.store";
+import { useAuthStore} from "@/stores/auth.store";
+import { useChatStore } from "@/stores/chat.store";
 import { onBeforeMount, type Ref } from "vue";
-import type { User } from "@/models/User";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
+import type { User, MessageWithoutSender, Message, Chat } from "@/models";
+
+const ChatStore = useChatStore();
 
 let user: Ref<User>;
+//let chats: Ref<Chat[]>;
+let chats: Chat[] | undefined;
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
+    chats = ChatStore.getChats;
 });
 
 </script>
@@ -18,7 +24,10 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
-        <div class="overflow-y-auto list-unstyled" >
+        <div class="overflow-y-auto list-unstyled" v-for="ch in chats">
+            <ChatSelectButton :chat="ch"/>
+            <!-- {{ chat.chat_name }}
+            {{ chat.message[0].body }} -->
             <!-- TODO: Вывод чатов-->
         </div>
         <div class="profile">

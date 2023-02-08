@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { PrivateChat } from "@/models/PrivateChat";
+import type { Chat } from "@/models";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
 
 const props = defineProps<{
-    chat: PrivateChat;
+    chat: Chat;
 }>();
 
-const chatName = props.chat.name!;
+const chatName = props.chat.chat_name!;
 
 const route = useRoute();
 </script>
