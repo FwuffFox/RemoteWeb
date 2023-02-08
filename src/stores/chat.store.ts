@@ -33,9 +33,8 @@ export const useChatStore = defineStore({
                 if(this.signal?.chats[i].interlocutor.username === username){
                     return this.signal.chats[i];
                 }
-                return undefined;
             }
-            return this.signal
+            return undefined;
         },
 
         async disconnect() {
