@@ -12,8 +12,8 @@ const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
 onBeforeMount(async () => {
-    await messengerStore.connect();
     await useChatStore().connect();
+    await messengerStore.connect();
 });
 
 onBeforeUnmount(async () => {
