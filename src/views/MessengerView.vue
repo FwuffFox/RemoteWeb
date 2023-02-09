@@ -6,16 +6,19 @@ import TextMessage from "@/components/messenger/TextMessage.vue";
 import { useMessengerStore } from "@/stores/messenger.store";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import { useRoute } from "vue-router";
+import { useChatStore } from "@/stores/chat.store";
 
 const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
 onBeforeMount(async () => {
     await messengerStore.connect();
+    await useChatStore().connect();
 });
 
 onBeforeUnmount(async () => {
     await messengerStore.disconnect();
+    await useChatStore().disconnect();
 });
 
 const input = ref("");

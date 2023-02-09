@@ -9,7 +9,7 @@ export const useChatStore = defineStore({
         signal: null as SignalrChatService | null,
     }),
     getters: {
-        isConnected: (state) => {
+        isConnected: (state): boolean => {
             return state.signal?.hubConnection.state == HubConnectionState.Connected;
         },
         // getChats: (state)/*: Chat[]*/ => {
@@ -29,13 +29,13 @@ export const useChatStore = defineStore({
             await this.signal?.sendMessage(messageBody, chatName);
         },
 
-        async getChatByUsername (username: string) {
-            for(var i = 0; i < (this.signal?.chats as Chat[]).length; ++i){
-                if(this.signal?.chats[i].interlocutor.username === username){
+        async getChatByUsername(username: string): Promise<Chat | null> {
+            for (let i = 0; i < (this.signal?.chats as Chat[]).length; ++i) {
+                if (this.signal?.chats[i].interlocutor.username === username) {
                     return this.signal.chats[i];
                 }
             }
-            return undefined;
+            return null;
         },
 
         async disconnect() {

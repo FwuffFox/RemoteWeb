@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { type Ref, ref, onBeforeMount } from "vue";
+import { onBeforeMount, onBeforeUnmount, type Ref, ref } from "vue";
 import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
@@ -9,26 +9,26 @@ import type { Chat } from "@/models";
 const chatStore = useChatStore();
 const route = useRoute();
 
-const chat = ref(await chatStore.getChatByUsername(route.params.chatName[0])) as Ref<Chat>;
+let chat: Ref<Chat | null>;
+onBeforeMount(async () => {
+    await chatStore.connect();
+    chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
+});
 // TODO: Сообщения для данного чата.
 
 const input = ref("");
 
-onBeforeMount(() => {
-    console.debug("start");
-    if (!chatStore.isConnected) {
-        chatStore.connect();
-    }
-    console.debug(chatStore.getChats);
-});
-
 async function sendMessage() {
     if (!chatStore.isConnected || input.value.length == 0) return;
-    await chatStore.send(input.value, route.params.chatName[0]);
+    await chatStore.send(input.value, route.params.chatName as string);
     input.value = "";
 }
 
 const isLoading = chatStore.isConnected;
+
+onBeforeUnmount(async () => {
+   await chatStore.disconnect();
+});
 </script>
 
 <template>
@@ -44,7 +44,7 @@ const isLoading = chatStore.isConnected;
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in chat.message" :key="message.body">
+                        <li v-for="message in chat?.messages" :key="message.body">
                             <TextMessage :message="message" />
                         </li>
                     </ul>

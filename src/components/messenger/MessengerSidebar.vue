@@ -3,26 +3,18 @@ import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
-import { onBeforeMount, type Ref } from "vue";
+import { computed, type ComputedRef, onBeforeMount, type Ref } from "vue";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
 import type { User, Chat } from "@/models";
 
-const ChatStore = useChatStore();
+const chatStore = useChatStore();
 
 let user: Ref<User>;
-//let chats: Ref<Chat[]>;
-let chats: Chat[];
+let chats: ComputedRef<Chat[]>;
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
-
-    if(!ChatStore.isConnected){
-        ChatStore.connect();
-    }
-    chats = ChatStore.getChats;
-    // console.debug("lenth is ", chats);
-    // for(var i = 0; i < chats.length; ++i){
-    //     console.debug(chats[i]);
-    // }
+    chats = computed(() => chatStore.getChats);
+    console.debug("chats are: ", chats.value);
 });
 </script>
 
@@ -31,7 +23,7 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
-        <div class="overflow-y-auto list-unstyled" v-for="ch in chats">
+        <div class="overflow-y-auto list-unstyled" v-for="ch in chats" :key="ch.chat_name">
             <ChatSelectButton :chat="ch" />
             <!-- {{ chat.chat_name }}
             {{ chat.message[0].body }} -->

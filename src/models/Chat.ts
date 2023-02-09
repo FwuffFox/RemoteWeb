@@ -1,7 +1,7 @@
-import type { User, MessageWithoutSender, Message } from "@/models";
+import type { User, Message } from "@/models";
 
-export interface Chat{
+export interface Chat {
     interlocutor: User;
     chat_name: string;
-    message: Message[];
+    messages: Message[];
 }
