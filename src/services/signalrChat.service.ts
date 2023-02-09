@@ -102,9 +102,8 @@ export class SignalrChatService {
         this.hubConnection.on("OnConnected", (inp_chats: ChatInfo[]) => {
             console.debug("OnConnected()");
             console.debug("inp_chats" , inp_chats)
-            console.debug("start: ", this.chats);
             for (let i = 0; i < inp_chats.length; ++i) {
-                console.debug("add in ", i, ': ', inp_chats);
+                console.debug("add in ", i, ': ', inp_chats[i]);
                 this.chats.push({
                     interlocutor: inp_chats[i].otherUser,
                     chat_name: inp_chats[i].otherUser.fullName,
@@ -131,7 +130,6 @@ export class SignalrChatService {
                         });
                         to++;
                     }
-                    console.debug("now ", this.chats);
                 }
                 while(from < arr_from.length){
                     this.chats[i].messages.push({
@@ -140,7 +138,6 @@ export class SignalrChatService {
                         sender: AuthStore.getUser,
                     });
                     from++;
-                    console.debug("now ", this.chats);
                 }
                 while(to < arr_to.length){
                     this.chats[i].messages.push({
@@ -149,8 +146,6 @@ export class SignalrChatService {
                         sender: inp_chats[i].otherUser,
                     });
                     to++;
-
-                    console.debug("now ", this.chats);
                 }
             }
             console.debug("Chats after connect ", this.chats);
@@ -158,19 +153,22 @@ export class SignalrChatService {
 
         this.hubConnection.on("OnGetMessage", (message: Message) => {
             console.debug("OnGetMessage()");
-
+            
+            console.debug("add mess: ", message);
             let found = this.chats[0];
-            for (let i = 1; i < this.chats.length; ++i) {   
-                if (found.interlocutor.username === message.sender.username) {
-                    found.messages.push(message);
-                    this.chats[0] = found;
-                    break;
-                } else {
-                    const tmp = this.chats[i];
-                    this.chats[i] = found;
-                    found = tmp;
-                }
+            for (let i = 1; i < this.chats.length && found.interlocutor.username !== message.sender.username; ++i) {   
+                const tmp = this.chats[i];
+                this.chats[i] = found;
+                found = tmp;
             }
+            // if(i == this.chats.length){ console.log("chat not found");break;}
+            found.messages.push(message);
+            this.chats[0] = found;
+
+            for(let i = 0; i < this.chats.length; i++){
+                console.log(i, this.chats[i].interlocutor.username);  
+            }
+            console.debug("chats after add: ", this.chats);
         });
     }
 

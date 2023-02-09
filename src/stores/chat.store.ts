@@ -21,7 +21,7 @@ export const useChatStore = defineStore({
     },
     actions: {
         async connect() {
-            console.debug("ch start");
+            console.debug("connect ");
             this.signal = new SignalrChatService();
             console.debug("ch is: ", this.signal.chats);
         },
