@@ -12,13 +12,11 @@ const messengerStore = useMessengerStore();
 const { messages } = storeToRefs(messengerStore);
 
 onBeforeMount(async () => {
-    await useChatStore().connect();
     await messengerStore.connect();
 });
 
 onBeforeUnmount(async () => {
     await messengerStore.disconnect();
-    await useChatStore().disconnect();
 });
 
 const input = ref("");

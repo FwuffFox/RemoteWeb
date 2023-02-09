@@ -12,7 +12,9 @@ const route = useRoute();
 let chat: Ref<Chat | null>;
 onBeforeMount(async () => {
     await chatStore.connect();
+    console.log("awaiting");
     chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
+    console.log("OnChatMount: ", chat.value);
 });
 // TODO: Сообщения для данного чата.
 
@@ -44,7 +46,7 @@ onBeforeUnmount(async () => {
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in chat?.messages" :key="message.body">
+                        <li v-for="message in chat?.messages" :key="message.sentOn">
                             <TextMessage :message="message" />
                         </li>
                     </ul>

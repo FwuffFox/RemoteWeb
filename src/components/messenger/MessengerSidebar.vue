@@ -24,8 +24,8 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
+        <RouterLink to="/">Главный чат</RouterLink>
         <div class="overflow-y-auto list-unstyled" v-for="ch in chats" :key="ch.chat_name">
-            <RouterLink to="/">Главный чат</RouterLink>
             <ChatSelectButton :chat="ch" />
             <!-- {{ chat.chat_name }}
             {{ chat.message[0].body }} -->

@@ -13,79 +13,17 @@ export type ChatInfo = {
 
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: Chat[];
+    public chats: Chat[] = [];
 
-    constructor() {
-        this.chats = [] as Chat[];
-        //console.debug("type is", typeof this.chats);      
-        //console.debug("ch0: ", this.chats);
-        // this.chats.push({
-        //     interlocutor: {
-        //         username: "one",
-        //         fullName: "two",
-        //         jobTitle: "lol",
-        //         role: "kek",
-        //     },
-        //     chat_name: "chat1",
-        //     messages: [
-        //         {
-        //             sender: {
-        //                 username: "one",
-        //                 fullName: "two",
-        //                 jobTitle: "lol",
-        //                 role: "kek",
-        //             },
-        //             body: "mess1",
-        //             sentOn: new Date("2023-02-08T19:13:25.305Z"),
-        //         },
-        //         {
-        //             sender: {
-        //                 username: "one",
-        //                 fullName: "two",
-        //                 jobTitle: "lol",
-        //                 role: "kek",
-        //             },
-        //             body: "mess2",
-        //             sentOn: new Date("2024-02-08T19:13:25.305Z"),
-        //         },
-        //     ],
-        // });
-        // this.chats.push({
-        //     interlocutor: {
-        //         username: "one",
-        //         fullName: "two",
-        //         jobTitle: "lol",
-        //         role: "kek",
-        //     },
-        //     chat_name: "chat12345678901234567890",
-        //     messages: [
-        //         {
-        //             sender: {
-        //                 username: "one",
-        //                 fullName: "two",
-        //                 jobTitle: "lol",
-        //                 role: "kek",
-        //             },
-        //             body: "mess1",
-        //             sentOn: new Date("2023-02-08T19:13:25.305Z"),
-        //         },
-        //         {
-        //             sender: {
-        //                 username: "one",
-        //                 fullName: "two",
-        //                 jobTitle: "lol",
-        //                 role: "kek",
-        //             },
-        //             body: "mess2",
-        //             sentOn: new Date("2024-02-08T19:13:25.305Z"),
-        //         },
-        //     ],
-        // });
-
-        console.debug("chat after constr: ", this.chats);
-        this.createConnection();
-        this.registerOnServerEvents();
-        this.startConnection();
+    public static async init(): Promise<SignalrChatService> {
+        const signal = new SignalrChatService();
+        signal.chats = [] as Chat[];
+        console.debug("chat after constr: ", signal.chats);
+        signal.createConnection();
+        signal.registerOnServerEvents();
+        await signal.startConnection();
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        return signal;
     }
 
     private createConnection(): HubConnection {
@@ -101,12 +39,12 @@ export class SignalrChatService {
     private registerOnServerEvents() {
         this.hubConnection.on("OnConnected", (inp_chats: ChatInfo[]) => {
             console.debug("OnConnected()");
-            console.debug("inp_chats" , inp_chats)
+            console.debug("inp_chats", inp_chats);
             for (let i = 0; i < inp_chats.length; ++i) {
-                console.debug("add in ", i, ': ', inp_chats[i]);
+                console.debug("add in ", i, ": ", inp_chats[i]);
                 this.chats.push({
                     interlocutor: inp_chats[i].otherUser,
-                    chat_name: inp_chats[i].otherUser.fullName,
+                    chat_name: inp_chats[i].otherUser.username,
                     messages: [] as Message[],
                 });
                 let from = 0;
@@ -131,7 +69,7 @@ export class SignalrChatService {
                         to++;
                     }
                 }
-                while(from < arr_from.length){
+                while (from < arr_from.length) {
                     this.chats[i].messages.push({
                         body: arr_from[from].body,
                         sentOn: arr_from[from].sentOn,
@@ -139,7 +77,7 @@ export class SignalrChatService {
                     });
                     from++;
                 }
-                while(to < arr_to.length){
+                while (to < arr_to.length) {
                     this.chats[i].messages.push({
                         body: arr_to[to].body,
                         sentOn: arr_to[to].sentOn,
@@ -152,11 +90,14 @@ export class SignalrChatService {
         });
 
         this.hubConnection.on("OnGetMessage", (message: Message) => {
-            console.debug("OnGetMessage()");
-            
-            console.debug("add mess: ", message);
+            console.log("Got a message:", message);
+
             let found = this.chats[0];
-            for (let i = 1; i < this.chats.length && found.interlocutor.username !== message.sender.username; ++i) {   
+            for (
+                let i = 1;
+                i < this.chats.length && found.interlocutor.username !== message.sender.username;
+                ++i
+            ) {
                 const tmp = this.chats[i];
                 this.chats[i] = found;
                 found = tmp;
@@ -165,19 +106,19 @@ export class SignalrChatService {
             found.messages.push(message);
             this.chats[0] = found;
 
-            for(let i = 0; i < this.chats.length; i++){
-                console.log(i, this.chats[i].interlocutor.username);  
+            for (let i = 0; i < this.chats.length; i++) {
+                console.log(i, this.chats[i].interlocutor.username);
             }
             console.debug("chats after add: ", this.chats);
         });
     }
 
-    private startConnection() {
+    private async startConnection() {
         if (this.hubConnection.state === HubConnectionState.Connected) {
             return console.error("Connection already started");
         }
 
-        this.hubConnection.start().then(() => {
+        await this.hubConnection.start().then(() => {
             console.log("Hub connection started");
         });
     }
@@ -191,8 +132,8 @@ export class SignalrChatService {
         const chatInfo = await this.hubConnection.invoke<ChatInfo>("GetChatInfo", chatName);
     }
 
-    public disconnect() {
-        this.hubConnection?.stop();
+    public async disconnect() {
+        await this.hubConnection?.stop();
         console.log("Hub connection stopped");
     }
 }
