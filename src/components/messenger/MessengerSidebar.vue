@@ -3,17 +3,18 @@ import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatStore } from "@/stores/chat.store";
-import { computed, type ComputedRef, onBeforeMount, type Ref } from "vue";
+import { onBeforeMount, ref, type Ref } from "vue";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
 import type { User, Chat } from "@/models";
 
 const chatStore = useChatStore();
 
 let user: Ref<User>;
-let chats: ComputedRef<Chat[]>;
+let chats: Ref<Chat[]>;
+const { getChats } = storeToRefs(chatStore);
 onBeforeMount(() => {
     user = storeToRefs(useAuthStore()).user as Ref<User>;
-    chats = computed(() => chatStore.getChats);
+    chats = getChats;
     console.debug("chats are: ", chats.value);
 });
 </script>
@@ -24,6 +25,7 @@ onBeforeMount(() => {
             <h5>Чаты</h5>
         </div>
         <div class="overflow-y-auto list-unstyled" v-for="ch in chats" :key="ch.chat_name">
+            <RouterLink to="/">Главный чат</RouterLink>
             <ChatSelectButton :chat="ch" />
             <!-- {{ chat.chat_name }}
             {{ chat.message[0].body }} -->
