@@ -13,76 +13,79 @@ export type ChatInfo = {
 
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
-    public chats: Chat[] = [];
+    public chats: Chat[];
 
     constructor() {
-        this.chats = [];
-        this.chats.push({
-            interlocutor: {
-                username: "one",
-                fullName: "two",
-                jobTitle: "lol",
-                role: "kek",
-            },
-            chat_name: "chat1",
-            messages: [
-                {
-                    sender: {
-                        username: "one",
-                        fullName: "two",
-                        jobTitle: "lol",
-                        role: "kek",
-                    },
-                    body: "mess1",
-                    sentOn: new Date("2023-02-08T19:13:25.305Z"),
-                },
-                {
-                    sender: {
-                        username: "one",
-                        fullName: "two",
-                        jobTitle: "lol",
-                        role: "kek",
-                    },
-                    body: "mess2",
-                    sentOn: new Date("2024-02-08T19:13:25.305Z"),
-                },
-            ],
-        });
-        this.chats.push({
-            interlocutor: {
-                username: "one",
-                fullName: "two",
-                jobTitle: "lol",
-                role: "kek",
-            },
-            chat_name: "chat12345678901234567890",
-            messages: [
-                {
-                    sender: {
-                        username: "one",
-                        fullName: "two",
-                        jobTitle: "lol",
-                        role: "kek",
-                    },
-                    body: "mess1",
-                    sentOn: new Date("2023-02-08T19:13:25.305Z"),
-                },
-                {
-                    sender: {
-                        username: "one",
-                        fullName: "two",
-                        jobTitle: "lol",
-                        role: "kek",
-                    },
-                    body: "mess2",
-                    sentOn: new Date("2024-02-08T19:13:25.305Z"),
-                },
-            ],
-        });
+        this.chats = [] as Chat[];
+        //console.debug("type is", typeof this.chats);      
+        //console.debug("ch0: ", this.chats);
+        // this.chats.push({
+        //     interlocutor: {
+        //         username: "one",
+        //         fullName: "two",
+        //         jobTitle: "lol",
+        //         role: "kek",
+        //     },
+        //     chat_name: "chat1",
+        //     messages: [
+        //         {
+        //             sender: {
+        //                 username: "one",
+        //                 fullName: "two",
+        //                 jobTitle: "lol",
+        //                 role: "kek",
+        //             },
+        //             body: "mess1",
+        //             sentOn: new Date("2023-02-08T19:13:25.305Z"),
+        //         },
+        //         {
+        //             sender: {
+        //                 username: "one",
+        //                 fullName: "two",
+        //                 jobTitle: "lol",
+        //                 role: "kek",
+        //             },
+        //             body: "mess2",
+        //             sentOn: new Date("2024-02-08T19:13:25.305Z"),
+        //         },
+        //     ],
+        // });
+        // this.chats.push({
+        //     interlocutor: {
+        //         username: "one",
+        //         fullName: "two",
+        //         jobTitle: "lol",
+        //         role: "kek",
+        //     },
+        //     chat_name: "chat12345678901234567890",
+        //     messages: [
+        //         {
+        //             sender: {
+        //                 username: "one",
+        //                 fullName: "two",
+        //                 jobTitle: "lol",
+        //                 role: "kek",
+        //             },
+        //             body: "mess1",
+        //             sentOn: new Date("2023-02-08T19:13:25.305Z"),
+        //         },
+        //         {
+        //             sender: {
+        //                 username: "one",
+        //                 fullName: "two",
+        //                 jobTitle: "lol",
+        //                 role: "kek",
+        //             },
+        //             body: "mess2",
+        //             sentOn: new Date("2024-02-08T19:13:25.305Z"),
+        //         },
+        //     ],
+        // });
+
+        console.debug("chat after constr: ", this.chats);
         this.createConnection();
         this.registerOnServerEvents();
         this.startConnection();
-        console.log(typeof this.chats);
     }
 
     private createConnection(): HubConnection {
@@ -96,22 +99,23 @@ export class SignalrChatService {
     }
 
     private registerOnServerEvents() {
-        this.hubConnection.on("OnConnected", (chats: ChatInfo[]) => {
+        this.hubConnection.on("OnConnected", (inp_chats: ChatInfo[]) => {
             console.debug("OnConnected()");
+            console.debug("inp_chats" , inp_chats)
             console.debug("start: ", this.chats);
-            console.debug("add: ",chats);
-            for (let i = 0; i < chats.length; ++i) {
+            for (let i = 0; i < inp_chats.length; ++i) {
+                console.debug("add in ", i, ': ', inp_chats);
                 this.chats.push({
-                    interlocutor: chats[i].otherUser,
-                    chat_name: chats[i].otherUser.fullName,
+                    interlocutor: inp_chats[i].otherUser,
+                    chat_name: inp_chats[i].otherUser.fullName,
                     messages: [] as Message[],
                 });
                 let from = 0;
                 let to = 0;
-                let arr_from = chats[i].messagesFromMe;
-                let arr_to = chats[i].messagesToMe;
-                while (from < arr_from.length || to < arr_to.length) {
-                    if (from < arr_from.length && new Date(arr_from[from].sentOn).getTime() < new Date(arr_to[to].sentOn).getTime()) {
+                let arr_from = inp_chats[i].messagesFromMe;
+                let arr_to = inp_chats[i].messagesToMe;
+                while (from < arr_from.length && to < arr_to.length) {
+                    if (new Date(arr_from[from].sentOn).getTime() < new Date(arr_to[to].sentOn).getTime()) {
                         // записываем в начале самые давние сообщения
                         this.chats[i].messages.push({
                             body: arr_from[from].body,
@@ -123,10 +127,30 @@ export class SignalrChatService {
                         this.chats[i].messages.push({
                             body: arr_to[to].body,
                             sentOn: arr_to[to].sentOn,
-                            sender: chats[i].otherUser,
+                            sender: inp_chats[i].otherUser,
                         });
                         to++;
                     }
+                    console.debug("now ", this.chats);
+                }
+                while(from < arr_from.length){
+                    this.chats[i].messages.push({
+                        body: arr_from[from].body,
+                        sentOn: arr_from[from].sentOn,
+                        sender: AuthStore.getUser,
+                    });
+                    from++;
+                    console.debug("now ", this.chats);
+                }
+                while(to < arr_to.length){
+                    this.chats[i].messages.push({
+                        body: arr_to[to].body,
+                        sentOn: arr_to[to].sentOn,
+                        sender: inp_chats[i].otherUser,
+                    });
+                    to++;
+
+                    console.debug("now ", this.chats);
                 }
             }
             console.debug("Chats after connect ", this.chats);
@@ -136,7 +160,7 @@ export class SignalrChatService {
             console.debug("OnGetMessage()");
 
             let found = this.chats[0];
-            for (let i = 1; i < this.chats.length; ++i) {
+            for (let i = 1; i < this.chats.length; ++i) {   
                 if (found.interlocutor.username === message.sender.username) {
                     found.messages.push(message);
                     this.chats[0] = found;
