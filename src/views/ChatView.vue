@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { Ref, ref } from "vue";
+import { type Ref, ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
@@ -13,6 +13,14 @@ const chat = ref(await chatStore.getChatByUsername(route.params.chatName[0])) as
 // TODO: Сообщения для данного чата.
 
 const input = ref("");
+
+onBeforeMount(() => {
+    console.debug("start");
+    if (!chatStore.isConnected) {
+        chatStore.connect();
+    }
+    console.debug(chatStore.getChats);
+});
 
 async function sendMessage() {
     if (!chatStore.isConnected || input.value.length == 0) return;

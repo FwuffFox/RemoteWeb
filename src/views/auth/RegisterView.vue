@@ -11,7 +11,6 @@ const authStore = useAuthStore();
 const alertStore = useAlertStore();
 
 onBeforeMount(() => {
-    const authStore = useAuthStore();
     if (authStore.isLoggedIn) {
         router.push("/");
     }
