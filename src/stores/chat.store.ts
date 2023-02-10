@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 import { SignalrChatService } from "@/services/signalrChat.service";
 import { HubConnectionState } from "@microsoft/signalr";
 import type { Chat } from "@/models";
+import { useAuthStore } from "./auth.store";
+
+const AuthStore = useAuthStore();
 
 export const useChatStore = defineStore({
     id: "chat",
@@ -24,8 +27,9 @@ export const useChatStore = defineStore({
             console.debug("ch is: ", this.signal?.chats);
         },
 
-        async send(messageBody: string, chatName: string) {
-            await this.signal?.sendMessage(messageBody, chatName);
+        async send(messageBody: string, active_chat: string) {
+            await this.signal?.sendMessage(messageBody, active_chat);
+            this.signal?.addMessageToChat({body: messageBody, sender: AuthStore.getUser, sentOn: new Date()}, active_chat);
         },
 
         async getChatByUsername(username: string): Promise<Chat | null> {

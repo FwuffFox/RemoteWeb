@@ -90,26 +90,8 @@ export class SignalrChatService {
         });
 
         this.hubConnection.on("OnGetMessage", (message: Message) => {
-            console.log("Got a message:", message);
+            this.addMessageToChat(message, message.sender.username);
 
-            let found = this.chats[0];
-            for (
-                let i = 1;
-                i < this.chats.length && found.interlocutor.username !== message.sender.username;
-                ++i
-            ) {
-                const tmp = this.chats[i];
-                this.chats[i] = found;
-                found = tmp;
-            }
-            // if(i == this.chats.length){ console.log("chat not found");break;}
-            found.messages.push(message);
-            this.chats[0] = found;
-
-            for (let i = 0; i < this.chats.length; i++) {
-                console.log(i, this.chats[i].interlocutor.username);
-            }
-            console.debug("chats after add: ", this.chats);
         });
     }
 
@@ -126,6 +108,25 @@ export class SignalrChatService {
     public async sendMessage(messageBody: string, chatName: string) {
         await this.hubConnection.invoke("SendMessage", messageBody, chatName);
         console.log(`Sent message ${messageBody} to ${chatName}`);
+    }
+
+    public async addMessageToChat(message: Message, active_chat: string){
+        console.log("Got a message:", message);
+
+        let found = this.chats[0];
+        for (let i = 1; i < this.chats.length && found.interlocutor.username !== active_chat; ++i) {
+            const tmp = this.chats[i];
+            this.chats[i] = found;
+            found = tmp;
+        }
+        // if(i == this.chats.length){ console.log("chat not found");break;}
+        found.messages.push(message);
+        this.chats[0] = found;
+
+        for (let i = 0; i < this.chats.length; i++) {
+            console.log(i, this.chats[i].interlocutor.username);
+        }
+        console.debug("chats after add: ", this.chats);
     }
 
     public async getChatInfo(chatName: string) {

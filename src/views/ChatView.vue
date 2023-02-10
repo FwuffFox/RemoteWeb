@@ -46,7 +46,7 @@ onBeforeUnmount(async () => {
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in chat?.messages" :key="message.sentOn">
+                        <li v-for="message in chat?.messages">
                             <TextMessage :message="message" />
                         </li>
                     </ul>
