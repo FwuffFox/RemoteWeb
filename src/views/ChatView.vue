@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { onBeforeMount, onBeforeUnmount, type Ref, ref } from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted, type Ref, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
@@ -10,13 +10,21 @@ const chatStore = useChatStore();
 const route = useRoute();
 
 let chat: Ref<Chat | null>;
+
+watch(route, async () => {
+    chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
+    console.log("After route change: ", chat.value);
+});
+
+
 onBeforeMount(async () => {
+    console.debug("Awaiting connect from ChatView");
     await chatStore.connect();
-    console.log("awaiting");
+    console.debug("Finished awaiting connect from ChatView");
+
     chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
     console.log("OnChatMount: ", chat.value);
 });
-// TODO: Сообщения для данного чата.
 
 const input = ref("");
 
@@ -29,7 +37,7 @@ async function sendMessage() {
 const isLoading = chatStore.isConnected;
 
 onBeforeUnmount(async () => {
-   await chatStore.disconnect();
+    await chatStore.disconnect();
 });
 </script>
 
@@ -46,6 +54,7 @@ onBeforeUnmount(async () => {
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
+                        {{ chat?.messages.map((message) => message.body) }}
                         <li v-for="message in chat?.messages">
                             <TextMessage :message="message" />
                         </li>
