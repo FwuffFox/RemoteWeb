@@ -10,6 +10,7 @@ export const useChatStore = defineStore({
     id: "chat",
     state: () => ({
         signal: null as SignalrChatService | null,
+        chats: null as Chat[] | null,
     }),
     getters: {
         isConnected: (state): boolean => {
@@ -24,12 +25,16 @@ export const useChatStore = defineStore({
             console.debug("connect ");
             const signal = await SignalrChatService.init();
             this.signal = signal;
+            this.chats = signal.chats;
             console.debug("ch is: ", this.signal?.chats);
         },
 
         async send(messageBody: string, active_chat: string) {
             await this.signal?.sendMessage(messageBody, active_chat);
-            this.signal?.addMessageToChat({body: messageBody, sender: AuthStore.getUser, sentOn: new Date()}, active_chat);
+            this.signal?.addMessageToChat(
+                { body: messageBody, sender: AuthStore.getUser, sentOn: new Date() },
+                active_chat
+            );
         },
 
         async getChatByUsername(username: string): Promise<Chat | null> {

@@ -1,28 +1,45 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { onBeforeMount, onBeforeUnmount, onMounted, type Ref, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import {
+    computed,
+    getCurrentInstance,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    onUpdated,
+    type Ref,
+    ref,
+    toRefs,
+    watch,
+} from "vue";
+import { useRoute, useRouter } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
-import type { Chat } from "@/models";
+import type { Chat, Message } from "@/models";
 
 const chatStore = useChatStore();
 const route = useRoute();
 
-let chat: Ref<Chat | null>;
+let chat: Ref<Chat> = ref({} as Chat);
 
-watch(route, async () => {
-    chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
+watch(route, async (newValue, oldValue) => {
+    chat.value = (await chatStore.getChatByUsername(newValue.params.chatName as string)) as Chat;
     console.log("After route change: ", chat.value);
 });
 
+watch(signal, () => console.log("Signal changed"));
+
+
+onUpdated(() => {
+    console.debug("On page updated");
+});
 
 onBeforeMount(async () => {
     console.debug("Awaiting connect from ChatView");
     await chatStore.connect();
     console.debug("Finished awaiting connect from ChatView");
 
-    chat = ref(await chatStore.getChatByUsername(route.params.chatName as string)) as Ref<Chat | null>;
+    chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
     console.log("OnChatMount: ", chat.value);
 });
 
@@ -53,9 +70,11 @@ onBeforeUnmount(async () => {
                     <h5>{{ route.params.chatName }}</h5>
                 </div>
                 <div class="messages-container position-relative">
-                    <ul id="messages-list" class="list-unstyled">
-                        <!-- {{ chat?.messages.map((message) => message.body) }} -->
-                        <li v-for="message in chat?.messages">
+                    <ul v-if="chat != null" id="messages-list" class="list-unstyled">
+                        {{
+                            chat?.chat_name
+                        }}
+                        <li v-for="message in chat?.messages" :key="message">
                             <TextMessage :message="message" />
                         </li>
                     </ul>

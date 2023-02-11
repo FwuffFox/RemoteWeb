@@ -30,9 +30,9 @@ export class SignalrChatService {
             await new Promise((resolve) => setTimeout(resolve, 5));
         }
         console.debug("finish! flag_OnConnected = ", signal.flag_OnConnected);
-       
-        // await new Promise((resolve) => setTimeout(resolve, 5000)); 
-        
+
+        // await new Promise((resolve) => setTimeout(resolve, 5000));
+
         return signal;
     }
 
@@ -98,12 +98,10 @@ export class SignalrChatService {
                 }
             }
             console.debug("Chats after connect ", this.chats);
-            this.flag_OnConnected = true;
         });
 
         this.hubConnection.on("OnGetMessage", (message: any) => {
             this.addMessageToChat({body: message.message.body, sender: message.sender, sentOn: message.message.sentOn}, message.sender.username);
-
         });
     }
 
