@@ -27,9 +27,6 @@ watch(route, async (newValue, oldValue) => {
     console.log("After route change: ", chat.value);
 });
 
-watch(signal, () => console.log("Signal changed"));
-
-
 onUpdated(() => {
     console.debug("On page updated");
 });
