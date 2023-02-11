@@ -14,16 +14,25 @@ export type ChatInfo = {
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
     public chats: Chat[] = [];
+    private flag_OnConnected = false;
 
     public static async init(): Promise<SignalrChatService> {
         const signal = new SignalrChatService();
+        console.debug("starting... flag_OnConnected = ", signal.flag_OnConnected);
         signal.chats = [] as Chat[];
-        console.debug("chat after constr: ", signal.chats);
         signal.createConnection();
         signal.registerOnServerEvents();
         await signal.startConnection();
-        //сделать задержку через цикл while с какимнибудь bool flag_fin
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        console.debug("waiting... flag_OnConnected = ", signal.flag_OnConnected);
+        while(!signal.flag_OnConnected){
+            //console.debug("in_progress flag_OnConnected = ", signal.flag_OnConnected);
+            await new Promise((resolve) => setTimeout(resolve, 5));
+        }
+        console.debug("finish! flag_OnConnected = ", signal.flag_OnConnected);
+       
+        // await new Promise((resolve) => setTimeout(resolve, 5000)); 
+        
         return signal;
     }
 
@@ -39,6 +48,7 @@ export class SignalrChatService {
 
     private registerOnServerEvents() {
         this.hubConnection.on("OnConnected", (inp_chats: ChatInfo[]) => {
+            this.flag_OnConnected = false;
             console.debug("OnConnected()");
             console.debug("inp_chats", inp_chats);
             for (let i = 0; i < inp_chats.length; ++i) {
@@ -88,10 +98,11 @@ export class SignalrChatService {
                 }
             }
             console.debug("Chats after connect ", this.chats);
+            this.flag_OnConnected = true;
         });
 
-        this.hubConnection.on("OnGetMessage", (message: Message) => {
-            this.addMessageToChat(message, message.sender.username);
+        this.hubConnection.on("OnGetMessage", (message: any) => {
+            this.addMessageToChat({body: message.message.body, sender: message.sender, sentOn: message.message.sentOn}, message.sender.username);
 
         });
     }
@@ -121,7 +132,8 @@ export class SignalrChatService {
             found = tmp;
         }
         // if(i == this.chats.length){ console.log("chat not found");break;}
-        found.messages.push(message);
+        //found.messages.push(message);
+        found.messages.push({body: message.body, sender: message.sender, sentOn: message.sentOn});
         this.chats[0] = found;
 
         for (let i = 0; i < this.chats.length; i++) {
