@@ -54,7 +54,7 @@ onBeforeUnmount(async () => {
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        {{ chat?.messages.map((message) => message.body) }}
+                        <!-- {{ chat?.messages.map((message) => message.body) }} -->
                         <li v-for="message in chat?.messages">
                             <TextMessage :message="message" />
                         </li>

@@ -22,6 +22,7 @@ export class SignalrChatService {
         signal.createConnection();
         signal.registerOnServerEvents();
         await signal.startConnection();
+        //сделать задержку через цикл while с какимнибудь bool flag_fin
         await new Promise((resolve) => setTimeout(resolve, 5000));
         return signal;
     }
