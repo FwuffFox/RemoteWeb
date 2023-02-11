@@ -1,6 +1,5 @@
-import { useAlertStore } from "@/stores/alert.store";
+import { useAlertStore, useAuthStore, useChatStore, useMessengerStore } from "@/stores";
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "@/stores/auth.store";
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -37,11 +36,16 @@ export const router = createRouter({
     ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     useAlertStore().clear();
     const isPublic = to.path.startsWith("/auth") || to.path.startsWith("/error");
     const loggedIn = useAuthStore().isLoggedIn;
 
+    if (isPublic) {
+        console.log("Full disconnecting.");
+        await useChatStore().disconnect();
+        await useMessengerStore().disconnect();
+    }
     if (!isPublic && !loggedIn) {
         console.log("User is not logged in. Redirecting to /auth/login");
         return next("/auth/login");

@@ -1,22 +1,19 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { ref, computed, onBeforeMount, onBeforeUnmount } from "vue";
-
+import { computed, onBeforeMount, ref } from "vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
-import { useMessengerStore } from "@/stores/messenger.store";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import { useRoute } from "vue-router";
-import { useChatStore } from "@/stores/chat.store";
+import { useChatStore, useMessengerStore } from "@/stores";
 
 const messengerStore = useMessengerStore();
+const chatStore = useChatStore();
 const { messages } = storeToRefs(messengerStore);
 
 onBeforeMount(async () => {
-    await messengerStore.connect();
-});
-
-onBeforeUnmount(async () => {
-    await messengerStore.disconnect();
+    console.log("MessengerView mounted");
+    if (!messengerStore.isConnected) await messengerStore.connect();
+    if (!chatStore.isConnected) await chatStore.connect();
 });
 
 const input = ref("");
@@ -28,7 +25,7 @@ async function sendMessage() {
 }
 const route = useRoute();
 
-const isLoading = computed(() => messengerStore.isConnected);
+const isLoading = computed(() => !messengerStore.isConnected);
 </script>
 
 <template>
@@ -40,7 +37,7 @@ const isLoading = computed(() => messengerStore.isConnected);
             <MessengerSidebar />
             <div id="main-content">
                 <div class="header">
-                    <h5>{{ route.params.chatName }}</h5>
+                    <h5>Главный чат</h5>
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">

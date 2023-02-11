@@ -24,17 +24,14 @@ onBeforeMount(() => {
         <div class="header">
             <h5>Чаты</h5>
         </div>
-        <RouterLink to="/">Главный чат</RouterLink>
-        <div class="overflow-y-auto list-unstyled" v-for="ch in chats" :key="ch.chat_name">
-            <ChatSelectButton :chat="ch" />
-            <!-- {{ chat.chat_name }}
-            {{ chat.message[0].body }} -->
-            <!-- TODO: Вывод чатов-->
+        <RouterLink class="py-2 px-2 w-100 mb-0 d-flex flex-row justify-content-center h4" to="/">Главный чат</RouterLink>
+        <div class="overflow-y-auto list-unstyled">
+            <ChatSelectButton v-for="chat in chats" :key="chat.chat_name" :chat="chat"/>
         </div>
         <div class="profile">
             <div class="d-flex align-items-center flex-grow-1">
                 <v-avatar class="me-2" size="50" color="blue">
-                    <span>CJ</span>
+                    <span>{{user?.username.substring(1, 3).toUpperCase()}}</span>
                 </v-avatar>
                 <a v-if:="user">{{ user?.fullName.split(" ")[1] }}</a>
             </div>

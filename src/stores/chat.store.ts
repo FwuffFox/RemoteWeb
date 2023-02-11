@@ -1,10 +1,7 @@
 import { defineStore } from "pinia";
 import { SignalrChatService } from "@/services/signalrChat.service";
-import { HubConnectionState } from "@microsoft/signalr";
 import type { Chat } from "@/models";
 import { useAuthStore } from "./auth.store";
-
-const AuthStore = useAuthStore();
 
 export const useChatStore = defineStore({
     id: "chat",
@@ -14,7 +11,7 @@ export const useChatStore = defineStore({
     }),
     getters: {
         isConnected: (state): boolean => {
-            return state.signal?.hubConnection.state == HubConnectionState.Connected;
+            return state.signal?.flag_OnConnected!;
         },
         getChats: (state): Chat[] => {
             return state.signal?.chats as Chat[];
@@ -32,7 +29,7 @@ export const useChatStore = defineStore({
         async send(messageBody: string, active_chat: string) {
             await this.signal?.sendMessage(messageBody, active_chat);
             this.signal?.addMessageToChat(
-                { body: messageBody, sender: AuthStore.getUser, sentOn: new Date() },
+                { body: messageBody, sender: useAuthStore().getUser, sentOn: new Date() },
                 active_chat
             );
         },

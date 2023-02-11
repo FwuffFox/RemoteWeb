@@ -33,7 +33,8 @@ onUpdated(() => {
 
 onBeforeMount(async () => {
     console.debug("Awaiting connect from ChatView");
-    await chatStore.connect();
+    if (!chatStore.isConnected)
+        await chatStore.connect();
     console.debug("Finished awaiting connect from ChatView");
 
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
@@ -48,11 +49,7 @@ async function sendMessage() {
     input.value = "";
 }
 
-const isLoading = chatStore.isConnected;
-
-onBeforeUnmount(async () => {
-    await chatStore.disconnect();
-});
+const isLoading = computed(() => !chatStore.isConnected);
 </script>
 
 <template>

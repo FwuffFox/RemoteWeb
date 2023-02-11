@@ -2,8 +2,6 @@ import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel 
 import { useAuthStore } from "@/stores/auth.store";
 import type { User, MessageWithoutSender, Message, Chat } from "@/models";
 
-const AuthStore = useAuthStore();
-
 export type ChatInfo = {
     otherUser: User;
     //chat_name: string;   сейчас чат называется как имя собеседника
@@ -14,7 +12,7 @@ export type ChatInfo = {
 export class SignalrChatService {
     public hubConnection: HubConnection = this.createConnection();
     public chats: Chat[] = [];
-    private flag_OnConnected = false;
+    public flag_OnConnected: boolean = false;
 
     public static async init(): Promise<SignalrChatService> {
         const signal = new SignalrChatService();
@@ -25,13 +23,10 @@ export class SignalrChatService {
         await signal.startConnection();
 
         console.debug("waiting... flag_OnConnected = ", signal.flag_OnConnected);
-        while(!signal.flag_OnConnected){
-            //console.debug("in_progress flag_OnConnected = ", signal.flag_OnConnected);
+        while (!signal.flag_OnConnected) {
             await new Promise((resolve) => setTimeout(resolve, 5));
         }
         console.debug("finish! flag_OnConnected = ", signal.flag_OnConnected);
-
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
 
         return signal;
     }
@@ -60,15 +55,15 @@ export class SignalrChatService {
                 });
                 let from = 0;
                 let to = 0;
-                let arr_from = inp_chats[i].messagesFromMe;
-                let arr_to = inp_chats[i].messagesToMe;
+                const arr_from = inp_chats[i].messagesFromMe;
+                const arr_to = inp_chats[i].messagesToMe;
                 while (from < arr_from.length && to < arr_to.length) {
                     if (new Date(arr_from[from].sentOn).getTime() < new Date(arr_to[to].sentOn).getTime()) {
                         // записываем в начале самые давние сообщения
                         this.chats[i].messages.push({
                             body: arr_from[from].body,
                             sentOn: arr_from[from].sentOn,
-                            sender: AuthStore.getUser,
+                            sender: useAuthStore().getUser,
                         });
                         from++;
                     } else {
@@ -84,7 +79,7 @@ export class SignalrChatService {
                     this.chats[i].messages.push({
                         body: arr_from[from].body,
                         sentOn: arr_from[from].sentOn,
-                        sender: AuthStore.getUser,
+                        sender: useAuthStore().getUser,
                     });
                     from++;
                 }
@@ -98,10 +93,14 @@ export class SignalrChatService {
                 }
             }
             console.debug("Chats after connect ", this.chats);
+            this.flag_OnConnected = true;
         });
 
         this.hubConnection.on("OnGetMessage", (message: any) => {
-            this.addMessageToChat({body: message.message.body, sender: message.sender, sentOn: message.message.sentOn}, message.sender.username);
+            this.addMessageToChat(
+                { body: message.message.body, sender: message.sender, sentOn: message.message.sentOn },
+                message.sender.username
+            );
         });
     }
 
@@ -120,7 +119,7 @@ export class SignalrChatService {
         console.log(`Sent message ${messageBody} to ${chatName}`);
     }
 
-    public async addMessageToChat(message: Message, active_chat: string){
+    public async addMessageToChat(message: Message, active_chat: string) {
         console.log("Got a message:", message);
 
         let found = this.chats[0];
@@ -131,7 +130,7 @@ export class SignalrChatService {
         }
         // if(i == this.chats.length){ console.log("chat not found");break;}
         //found.messages.push(message);
-        found.messages.push({body: message.body, sender: message.sender, sentOn: message.sentOn});
+        found.messages.push({ body: message.body, sender: message.sender, sentOn: message.sentOn });
         this.chats[0] = found;
 
         for (let i = 0; i < this.chats.length; i++) {

@@ -14,18 +14,29 @@ const route = useRoute();
 </script>
 
 <template>
-    <li class="mb-2 d-flex">
+    <li class="">
         <RouterLink
-            class="py-2 px-10 w-100"
+            class="py-2 px-2 w-100 mb-0 d-flex flex-row"
             :class="{ isActive: chatName === route.params.chatName }"
             :to="'/' + chatName"
         >
-            <span class="h3">{{ chatName }}</span>
+            <v-avatar class="me-5" size="50" color="blue">
+                <span>{{ props.chat.interlocutor?.username.substring(1, 3).toUpperCase() }}</span>
+            </v-avatar>
+            <div class="d-flex flex-column overflow-hidden">
+                <span class="h3">{{ props.chat.interlocutor?.fullName }}</span>
+                <span class="text">{{ props.chat.messages[props.chat.messages.length - 1].body }}</span>
+            </div>
         </RouterLink>
     </li>
 </template>
 
 <style scoped>
+.text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 a.isActive {
     background: rgba(255, 255, 255, 0.25);
 }

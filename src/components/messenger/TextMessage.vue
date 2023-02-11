@@ -14,10 +14,10 @@ const user = useAuthStore().getUser;
         class="message-item d-flex justify-content-start"
         :class="{ ismine: user?.username === message.sender?.username }"
     >
-        <v-avatar> {{ message.sender?.username.substring(1, 3).toUpperCase() }}</v-avatar>
+        <v-avatar>{{ message.sender?.username.substring(1, 3).toUpperCase() }}</v-avatar>
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
-                <span class="author text-no-wrap">{{ message.sender.username }}</span>
+                <span class="author text-no-wrap">{{ message.sender.fullName }}</span>
             </div>
             <div class="content text-break">{{ message.body }}</div>
         </div>
