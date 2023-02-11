@@ -1,25 +1,32 @@
 <script setup lang="ts">
 import type { Message } from "@/models/Message";
 import { useAuthStore } from "@/stores/auth.store";
-
-defineProps<{
+import { useRouter } from "vue-router";
+const router = useRouter();
+const props = defineProps<{
     message: Message;
 }>();
 
 const user = useAuthStore().getUser;
+
+const messageIsMine = user?.username === props.message.sender?.username;
 </script>
 
 <template>
-    <div
-        class="message-item d-flex justify-content-start"
-        :class="{ ismine: user?.username === message.sender?.username }"
-    >
-        <v-avatar>{{ message.sender?.username.substring(1, 3).toUpperCase() }}</v-avatar>
+    <div class="message-item d-flex justify-content-start" :class="{ ismine: messageIsMine }">
+        <v-avatar class="ml-3" color="blue" variant="elevated" v-if="messageIsMine">{{
+            props.message.sender.username.substring(1, 3).toUpperCase()
+        }}</v-avatar>
+        <RouterLink v-if="!messageIsMine" :to="`/${props.message.sender.username}`">
+            <v-avatar class="mr-3" color="blue" variant="elevated">
+                {{ props.message.sender.username.substring(1, 3).toUpperCase() }}</v-avatar
+            >
+        </RouterLink>
         <div class="message-content">
             <div class="message-info d-flex flex-wrap align-items-center">
-                <span class="author text-no-wrap">{{ message.sender.fullName }}</span>
+                <span class="author text-no-wrap">{{ props.message.sender.fullName }}</span>
             </div>
-            <div class="content text-break">{{ message.body }}</div>
+            <div class="content text-break">{{ props.message.body }}</div>
         </div>
     </div>
 </template>

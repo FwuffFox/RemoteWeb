@@ -1,21 +1,10 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import {
-    computed,
-    getCurrentInstance,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    onUpdated,
-    type Ref,
-    ref,
-    toRefs,
-    watch,
-} from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed, onBeforeMount, onUpdated, type Ref, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
-import type { Chat, Message } from "@/models";
+import type { Chat } from "@/models";
 
 const chatStore = useChatStore();
 const route = useRoute();
@@ -33,8 +22,7 @@ onUpdated(() => {
 
 onBeforeMount(async () => {
     console.debug("Awaiting connect from ChatView");
-    if (!chatStore.isConnected)
-        await chatStore.connect();
+    if (!chatStore.isConnected) await chatStore.connect();
     console.debug("Finished awaiting connect from ChatView");
 
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
@@ -60,14 +48,14 @@ const isLoading = computed(() => !chatStore.isConnected);
             </v-dialog>
             <MessengerSidebar />
             <div id="main-content">
-                <div class="header">
-                    <h5>{{ route.params.chatName }}</h5>
+                <div class="header d-grid">
+                    <button>
+                        <v-icon icon="mdi-tally-mark-3" />
+                    </button>
+                    <h5 >{{ route.params.chatName }}</h5>
                 </div>
                 <div class="messages-container position-relative">
                     <ul v-if="chat != null" id="messages-list" class="list-unstyled">
-                        {{
-                            chat?.chat_name
-                        }}
                         <li v-for="message in chat?.messages" :key="message">
                             <TextMessage :message="message" />
                         </li>
@@ -117,21 +105,12 @@ const isLoading = computed(() => !chatStore.isConnected);
     background-color: white;
 
     #sidebar {
-        width: 270px;
+        width: 25%;
         min-width: 270px;
     }
 
     #main-content {
         flex-grow: 1;
-    }
-
-    .room-header {
-        height: 50px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
     }
 
     .messages-container {
@@ -146,45 +125,6 @@ const isLoading = computed(() => !chatStore.isConnected);
     }
 }
 
-#sidebar {
-    display: flex;
-    flex-direction: column;
-    background-color: orange;
-    color: white;
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 50px;
-        padding: 20px;
-
-        h5 {
-            font-size: 20px;
-            font-weight: 500;
-            text-transform: uppercase;
-            margin: 0;
-        }
-    }
-
-    .profile {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        background: rgba(0, 0, 0, 0.1);
-        margin-top: auto;
-
-        a {
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 180px;
-        }
-    }
-}
-
 #main-content {
     display: flex;
     flex-direction: column;
@@ -193,8 +133,9 @@ const isLoading = computed(() => !chatStore.isConnected);
 
     .header {
         height: 50px;
-        display: flex;
         justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
@@ -224,8 +165,13 @@ const isLoading = computed(() => !chatStore.isConnected);
     }
 }
 
-@media screen and (max-width: 480px) {
-    #sidebar {
+@media screen and (max-width: 512px) {
+    .app-container#sidebar {
+
+        width: 100%;
+    }
+
+    #main-content {
         display: none;
     }
 }

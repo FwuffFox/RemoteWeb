@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import LogoutButton from "@/components/LogoutButton.vue";
 import { storeToRefs } from "pinia";
-import { useAuthStore } from "@/stores/auth.store";
-import { useChatStore } from "@/stores/chat.store";
 import { onBeforeMount, ref, type Ref } from "vue";
 import ChatSelectButton from "@/components/messenger/ChatSelectButton.vue";
 import type { User, Chat } from "@/models";
+import { useAuthStore, useChatStore } from "@/stores";
 
 const chatStore = useChatStore();
 
@@ -22,9 +21,9 @@ onBeforeMount(() => {
 <template>
     <div id="sidebar">
         <div class="header">
-            <h5>Чаты</h5>
+            <h4>REMOTE</h4>
         </div>
-        <RouterLink class="py-2 px-2 w-100 mb-0 d-flex flex-row justify-content-center h4" to="/">Главный чат</RouterLink>
+        <RouterLink class="py-2 px-2 w-100 mb-0 d-flex flex-row justify-content-center h4 text-white orange-hover" to="/">Главный чат</RouterLink>
         <div class="overflow-y-auto list-unstyled">
             <ChatSelectButton v-for="chat in chats" :key="chat.chat_name" :chat="chat"/>
         </div>

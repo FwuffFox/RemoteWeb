@@ -6,15 +6,17 @@
     font-weight: normal;
 }
 
-a,
-.green {
-    text-decoration: none;
+a {
+  text-decoration: none;
+}
+
+.orange-hover {
     color: colors.$primary-color;
     transition: 0.4s;
 }
 
 @media (hover: hover) {
-    a:hover {
+    .orange-hover:hover {
         background-color: colors.$link-highlight-color;
     }
 }
