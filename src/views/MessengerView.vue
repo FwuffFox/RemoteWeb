@@ -24,12 +24,13 @@ async function sendMessage() {
     if (!messengerStore.isConnected || input.value.length == 0) return;
     await messengerStore.send(input.value);
     input.value = "";
+    //input.focus();
 }
 const route = useRoute();
 
 const isLoading = computed(() => !messengerStore.isConnected);
 
-const sidebarHidden = ref(true);
+const sidebarHidden = ref(false);
 </script>
 
 <template>

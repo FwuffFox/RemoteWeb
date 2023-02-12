@@ -20,6 +20,9 @@ watch(route, async (newValue, oldValue) => {
 
 onUpdated(() => {
     console.debug("On page updated");
+    //document.getElementById("input")?.focus();
+        
+    //input.focus();
 });
 
 const flag = ref(false);
@@ -56,20 +59,20 @@ const sidebarHidden = ref(true);
 </script>
 
 <template>
-    <div class="d-block" :key="flag">
+    <div class="d-block">
         <main class="app-container d-flex vh-100 justify-content-between">
-            <v-dialog persistent v-model="isLoading">
+            <v-dialog persistent v-model="isLoading" :key="flag">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <MessengerSidebar :class="{'w-0': sidebarHidden}"/>
+            <MessengerSidebar :class="{'w-0': sidebarHidden}" :key="flag"/>
             <div id="main-content">
-                <div class="header d-flex">
+                <div class="header d-flex" :key="flag">
                     <button @click="sidebarHidden = !sidebarHidden">
                         <v-icon class="mr-2" icon="mdi-arrow-left" />
                     </button>
                     <h5>{{ route.params.chatName }}</h5>
                 </div>
-                <div class="messages-container position-relative">
+                <div class="messages-container position-relative" :key="flag">
                     <ul v-if="chat != null" id="messages-list" class="list-unstyled">
                         <li v-for="message in chat?.messages" :key="message">
                             <TextMessage :message="message" />
