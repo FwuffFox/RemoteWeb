@@ -6,6 +6,7 @@ import router from "@/router";
 import * as Yup from "yup";
 import { Field, Form, configure } from "vee-validate";
 import { IconPeople, IconLock } from "@/components/icons";
+import IconSuitcase from "@/components/icons/IconSuitcase.vue";
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
@@ -88,7 +89,7 @@ watch(username, (newValue, oldValue) => {
                         <IconPeople />
                     </div>
                 </div>
-                <VAlert class="w-100" type="error" variant="text" v-if="errors.username">
+                <VAlert class="w-100" type="error" variant="outlined" v-if="errors.username">
                     {{ errors.username }}
                 </VAlert>
 
@@ -105,7 +106,7 @@ watch(username, (newValue, oldValue) => {
                         <IconPeople />
                     </div>
                 </div>
-                <VAlert class="w-100" type="error" variant="text" v-if="errors.fullName">
+                <VAlert class="w-100" type="error" variant="outlined" v-if="errors.fullName">
                     {{ errors.fullName }}
                 </VAlert>
 
@@ -118,8 +119,11 @@ watch(username, (newValue, oldValue) => {
                         autocomplete="on"
                     />
                     <label for="jobTitle">Должность:</label>
+                    <div class="icon">
+                        <IconSuitcase />
+                    </div>
                 </div>
-                <VAlert class="w-100" type="error" variant="text" v-if="errors.jobTitle">
+                <VAlert class="w-100" type="error" variant="outlined" v-if="errors.jobTitle">
                     {{ errors.jobTitle }}
                 </VAlert>
 
@@ -136,7 +140,7 @@ watch(username, (newValue, oldValue) => {
                         <IconLock />
                     </div>
                 </div>
-                <VAlert class="w-100" type="error" variant="text" v-if="errors.first_password">
+                <VAlert class="w-100" type="error" variant="outlined" v-if="errors.first_password">
                     {{ errors.first_password }}
                 </VAlert>
 
@@ -153,7 +157,7 @@ watch(username, (newValue, oldValue) => {
                         <IconLock />
                     </div>
                 </div>
-                <VAlert class="w-100" type="error" variant="text" v-if="errors.second_password">
+                <VAlert class="w-100" type="error" variant="outlined" v-if="errors.second_password">
                     {{ errors.second_password }}
                 </VAlert>
 
@@ -310,7 +314,7 @@ Form {
                 opacity: 1;
                 fill: $primary;
                 path {
-                    fill: $primary;
+                    stroke: $primary;
                 }
             }
         }
@@ -386,7 +390,21 @@ $displacement: 3px;
     }
 
     .register-container {
-        width: 100%;
+        width: 100% !important;
+    }
+}
+
+a.discrete {
+    color: rgba(#000, 0.4);
+    font-size: 14px;
+    border-bottom: solid 1px rgba(#000, 0);
+    padding-bottom: 4px;
+    margin-left: auto;
+    font-weight: 300;
+    transition: all 0.3s ease;
+    margin-top: 40px;
+    &:hover {
+        border-bottom: solid 1px rgba(#000, 0.2);
     }
 }
 </style>

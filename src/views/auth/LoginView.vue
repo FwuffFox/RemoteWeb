@@ -322,7 +322,7 @@ $displacement: 3px;
     }
 
     .login-container {
-        width: 100%;
+        width: 100% !important;
     }
 }
 </style>

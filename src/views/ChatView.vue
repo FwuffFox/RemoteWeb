@@ -6,6 +6,8 @@ import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import type { Chat } from "@/models";
 
+defineEmits(["click", "click", "click"]);
+
 const chatStore = useChatStore();
 const route = useRoute();
 
@@ -20,13 +22,23 @@ onUpdated(() => {
     console.debug("On page updated");
 });
 
+const flag = ref(false);
 onBeforeMount(async () => {
-    console.debug("Awaiting connect from ChatView");
-    if (!chatStore.isConnected) await chatStore.connect();
-    console.debug("Finished awaiting connect from ChatView");
+
+    if (!chatStore.isConnected) {
+        console.debug("Awaiting connect from ChatView");
+        await chatStore.connect();
+        console.debug("Finished awaiting connect from ChatView");
+    }
+
 
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
     console.log("OnChatMount: ", chat.value);
+
+    setInterval(() => {
+        flag.value = !flag.value;
+        console.log("Force update");
+    }, 5000);
 });
 
 const input = ref("");
@@ -39,21 +51,23 @@ async function sendMessage() {
 }
 
 const isLoading = computed(() => !chatStore.isConnected);
+
+const sidebarHidden = ref(true);
 </script>
 
 <template>
-    <div class="d-block">
+    <div class="d-block" :key="flag">
         <main class="app-container d-flex vh-100 justify-content-between">
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <MessengerSidebar />
+            <MessengerSidebar :class="{'w-0': sidebarHidden}"/>
             <div id="main-content">
-                <div class="header d-grid">
-                    <button>
-                        <v-icon icon="mdi-tally-mark-3" />
+                <div class="header d-flex">
+                    <button @click="sidebarHidden = !sidebarHidden">
+                        <v-icon class="mr-2" icon="mdi-arrow-left" />
                     </button>
-                    <h5 >{{ route.params.chatName }}</h5>
+                    <h5>{{ route.params.chatName }}</h5>
                 </div>
                 <div class="messages-container position-relative">
                     <ul v-if="chat != null" id="messages-list" class="list-unstyled">
@@ -106,8 +120,7 @@ const isLoading = computed(() => !chatStore.isConnected);
     background-color: white;
 
     #sidebar {
-        width: 25%;
-        min-width: 270px;
+        width: 35%;
     }
 
     #main-content {
@@ -135,8 +148,6 @@ const isLoading = computed(() => !chatStore.isConnected);
     .header {
         height: 50px;
         justify-content: space-between;
-        display: grid;
-        grid-template-columns: 1fr 2fr;
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
@@ -163,17 +174,6 @@ const isLoading = computed(() => !chatStore.isConnected);
         .actions {
             padding: 0 10px;
         }
-    }
-}
-
-@media screen and (max-width: 512px) {
-    .app-container#sidebar {
-
-        width: 100%;
-    }
-
-    #main-content {
-        display: none;
     }
 }
 </style>

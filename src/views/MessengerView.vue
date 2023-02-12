@@ -10,6 +10,8 @@ const messengerStore = useMessengerStore();
 const chatStore = useChatStore();
 const { messages } = storeToRefs(messengerStore);
 
+defineEmits(["click"]);
+
 onBeforeMount(async () => {
     console.log("MessengerView mounted");
     if (!messengerStore.isConnected) await messengerStore.connect();
@@ -26,6 +28,8 @@ async function sendMessage() {
 const route = useRoute();
 
 const isLoading = computed(() => !messengerStore.isConnected);
+
+const sidebarHidden = ref(true);
 </script>
 
 <template>
@@ -34,9 +38,12 @@ const isLoading = computed(() => !messengerStore.isConnected);
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <MessengerSidebar />
+            <MessengerSidebar :class="{ 'w-0': sidebarHidden }" />
             <div id="main-content">
-                <div class="header">
+                <div class="header d-flex">
+                    <button @click="sidebarHidden = !sidebarHidden">
+                        <v-icon class="mr-2" icon="mdi-arrow-left" />
+                    </button>
                     <h5>Главный чат</h5>
                 </div>
                 <div class="messages-container position-relative">
@@ -88,10 +95,10 @@ const isLoading = computed(() => !messengerStore.isConnected);
     height: 100vh;
     justify-content: space-between;
     background-color: white;
+    overflow: scroll;
 
     #sidebar {
-        width: 270px;
-        min-width: 270px;
+        width: 35%;
     }
 
     #main-content {
@@ -118,9 +125,6 @@ const isLoading = computed(() => !messengerStore.isConnected);
 
     .header {
         height: 50px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;
     }
@@ -149,9 +153,10 @@ const isLoading = computed(() => !messengerStore.isConnected);
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 420px) {
     #sidebar {
-        display: none;
+        min-width: 40px !important;
+        width: 50% !important;
     }
 }
 </style>

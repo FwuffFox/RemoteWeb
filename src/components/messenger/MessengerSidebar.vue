@@ -50,6 +50,7 @@ onBeforeMount(() => {
     flex-direction: column;
     background-color: orange;
     color: white;
+    transition: 0.5s;
 
     .header {
         display: flex;
