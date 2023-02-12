@@ -32,6 +32,7 @@ onBeforeMount(async () => {
 const input = ref("");
 
 async function sendMessage() {
+    //console.debug("send message to: ", route.params.chatName);
     if (!chatStore.isConnected || input.value.length == 0) return;
     await chatStore.send(input.value, route.params.chatName as string);
     input.value = "";

@@ -58,7 +58,7 @@ export class SignalrChatService {
                 const arr_from = inp_chats[i].messagesFromMe;
                 const arr_to = inp_chats[i].messagesToMe;
                 while (from < arr_from.length && to < arr_to.length) {
-                    if (new Date(arr_from[from].sentOn).getTime() < new Date(arr_to[to].sentOn).getTime()) {
+                    if (arr_from[from].sentOn < arr_to[to].sentOn) {
                         // записываем в начале самые давние сообщения
                         this.chats[i].messages.push({
                             body: arr_from[from].body,
@@ -92,8 +92,19 @@ export class SignalrChatService {
                     to++;
                 }
             }
-            console.debug("Chats after connect ", this.chats);
-            this.flag_OnConnected = true;
+
+            // console.debug("Chats before sort: ");
+            // for(let i = 0; i < this.chats.length; ++i){
+            //     console.debug(i, "is", this.chats[i]);
+            // }
+            this.chats.sort((a: Chat, b:Chat) => {return ((a.messages[a.messages.length - 1].sentOn< b.messages[b.messages.length - 1].sentOn) ? -1 : 1);});
+
+            console.debug("Chats after connect ");
+            for(let i = 0; i < this.chats.length; ++i){
+                console.debug(i, this.chats[i]);
+            }
+
+            this.flag_OnConnected = true;   // для завершения загрузки
         });
 
         this.hubConnection.on("OnGetMessage", (message: any) => {
@@ -120,7 +131,7 @@ export class SignalrChatService {
     }
 
     public async addMessageToChat(message: Message, active_chat: string) {
-        console.log("Got a message:", message);
+        console.log("New message: ", message, "in active_chat: ", active_chat);
 
         let found = this.chats[0];
         for (let i = 1; i < this.chats.length && found.interlocutor.username !== active_chat; ++i) {
@@ -128,15 +139,21 @@ export class SignalrChatService {
             this.chats[i] = found;
             found = tmp;
         }
-        // if(i == this.chats.length){ console.log("chat not found");break;}
-        //found.messages.push(message);
-        found.messages.push({ body: message.body, sender: message.sender, sentOn: message.sentOn });
-        this.chats[0] = found;
-
-        for (let i = 0; i < this.chats.length; i++) {
-            console.log(i, this.chats[i].interlocutor.username);
+        if(this.chats.length == 0 || found.interlocutor.username !== active_chat){ 
+            console.log("Chat not found! Create new chat");
+            this.chats.push(found);
+            found = {interlocutor: {username: active_chat, fullName: active_chat, jobTitle: "", role: ""} as User, chat_name: active_chat, messages: [] as Message[]} as Chat;
+            console.debug(found);
         }
-        console.debug("chats after add: ", this.chats);
+        found.messages.push(message);
+        //found.messages.push({ body: message.body, sender: message.sender, sentOn: message.sentOn });
+        this.chats[0] = found;
+        
+        console.debug("chat after add new message: ")
+        for (let i = 0; i < this.chats.length; i++) {
+            console.log(i, "username: ", this.chats[i].interlocutor.username, this.chats[i]);
+        }
+        
     }
 
     public async getChatInfo(chatName: string) {
