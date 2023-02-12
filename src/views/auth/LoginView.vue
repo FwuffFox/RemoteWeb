@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { IconPeople, IconLock } from "@/components/icons";
+import { IconLock, IconPeople } from "@/components/icons";
 import { RouterLink } from "vue-router";
 import * as Yup from "yup";
-import { Field, Form, configure } from "vee-validate";
+import { configure, Field, Form } from "vee-validate";
 
 import router from "@/router";
 import { storeToRefs } from "pinia";
@@ -33,8 +33,7 @@ async function invalidSubmit(values: any) {
 }
 
 const schema = Yup.object().shape({
-    username: Yup.string()
-        .min(5, "Имя пользователя должно быть больше 4 символов.\n"),
+    username: Yup.string().min(5, "Имя пользователя должно быть больше 4 символов.\n"),
 
     password: Yup.string()
         .required("Длина пароля должна быть не меньше 8 символов\n")
@@ -52,7 +51,7 @@ const username = ref("");
 watch(username, (newValue, oldValue) => {
     newValue = newValue.trim();
     if (!newValue.startsWith("@")) newValue = "@" + newValue;
-    username.value = newValue;
+    username.value = newValue.toLowerCase();
 });
 </script>
 
@@ -67,9 +66,7 @@ watch(username, (newValue, oldValue) => {
                 :validation-schema="schema"
                 v-slot="{ errors }"
             >
-                <h4 class="font-weight-bold">
-                    Мы <span>Remote</span>
-                </h4>
+                <h4 class="font-weight-bold">Мы <span>Remote</span></h4>
 
                 <p>Добро пожаловать!</p>
 

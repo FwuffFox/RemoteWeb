@@ -4,8 +4,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useAlertStore } from "@/stores/alert.store";
 import router from "@/router";
 import * as Yup from "yup";
-import { Field, Form, configure } from "vee-validate";
-import { IconPeople, IconLock } from "@/components/icons";
+import { configure, Field, Form } from "vee-validate";
+import { IconLock, IconPeople } from "@/components/icons";
 import IconSuitcase from "@/components/icons/IconSuitcase.vue";
 
 const authStore = useAuthStore();
@@ -54,7 +54,7 @@ const username = ref("");
 watch(username, (newValue, oldValue) => {
     newValue = newValue.trim();
     if (!newValue.startsWith("@")) newValue = "@" + newValue;
-    username.value = newValue;
+    username.value = newValue.toLowerCase();
 });
 </script>
 

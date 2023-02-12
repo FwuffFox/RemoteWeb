@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { computed, onBeforeMount, onUpdated, type Ref, ref, watch } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, onUpdated, type Ref, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
@@ -20,29 +20,28 @@ watch(route, async (newValue, oldValue) => {
 
 onUpdated(() => {
     console.debug("On page updated");
-    //document.getElementById("input")?.focus();
-        
-    //input.focus();
 });
 
-const flag = ref(false);
+let updateId: number;
 onBeforeMount(async () => {
-
     if (!chatStore.isConnected) {
         console.debug("Awaiting connect from ChatView");
         await chatStore.connect();
         console.debug("Finished awaiting connect from ChatView");
     }
 
-
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
     console.log("OnChatMount: ", chat.value);
 
-    setInterval(() => {
+    updateId = setInterval(() => {
         flag.value = !flag.value;
         console.log("Force update");
     }, 5000);
+
+    sidebarHidden = ref(false);
 });
+
+const flag = ref(false);
 
 const input = ref("");
 
@@ -55,7 +54,9 @@ async function sendMessage() {
 
 const isLoading = computed(() => !chatStore.isConnected);
 
-const sidebarHidden = ref(true);
+let sidebarHidden: Ref<boolean>;
+
+onBeforeUnmount(() => clearInterval(updateId));
 </script>
 
 <template>
@@ -64,7 +65,7 @@ const sidebarHidden = ref(true);
             <v-dialog persistent v-model="isLoading" :key="flag">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <MessengerSidebar :class="{'w-0': sidebarHidden}" :key="flag"/>
+            <MessengerSidebar :class="{ 'w-0': sidebarHidden }" :key="flag" />
             <div id="main-content">
                 <div class="header d-flex" :key="flag">
                     <button @click="sidebarHidden = !sidebarHidden">
@@ -150,7 +151,6 @@ const sidebarHidden = ref(true);
 
     .header {
         height: 50px;
-        justify-content: space-between;
         align-items: center;
         padding: 10px;
         border-bottom: 1px solid #eee;

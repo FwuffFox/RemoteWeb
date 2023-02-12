@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, ref } from "vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
-import { useRoute } from "vue-router";
 import { useChatStore, useMessengerStore } from "@/stores";
 
 const messengerStore = useMessengerStore();
@@ -12,25 +11,34 @@ const { messages } = storeToRefs(messengerStore);
 
 defineEmits(["click"]);
 
+let updateId: number;
 onBeforeMount(async () => {
     console.log("MessengerView mounted");
     if (!messengerStore.isConnected) await messengerStore.connect();
     if (!chatStore.isConnected) await chatStore.connect();
+
+    updateId = setInterval(() => {
+        flag.value = !flag.value;
+        console.log("Force update");
+    }, 5000);
 });
 
 const input = ref("");
+const flag = ref(false);
 
 async function sendMessage() {
     if (!messengerStore.isConnected || input.value.length == 0) return;
     await messengerStore.send(input.value);
     input.value = "";
-    //input.focus();
 }
-const route = useRoute();
 
 const isLoading = computed(() => !messengerStore.isConnected);
 
 const sidebarHidden = ref(false);
+
+onBeforeUnmount(() => {
+    clearInterval(updateId);
+});
 </script>
 
 <template>
@@ -39,7 +47,7 @@ const sidebarHidden = ref(false);
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
-            <MessengerSidebar :class="{ 'w-0': sidebarHidden }" />
+            <MessengerSidebar :class="{ 'w-0': sidebarHidden }" :key="flag" />
             <div id="main-content">
                 <div class="header d-flex">
                     <button @click="sidebarHidden = !sidebarHidden">
@@ -49,7 +57,7 @@ const sidebarHidden = ref(false);
                 </div>
                 <div class="messages-container position-relative">
                     <ul id="messages-list" class="list-unstyled">
-                        <li v-for="message in messages" :key="message.body">
+                        <li v-for="message in messages" :key="message">
                             <TextMessage :message="message" />
                         </li>
                     </ul>
