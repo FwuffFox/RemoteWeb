@@ -17,10 +17,10 @@ onBeforeMount(async () => {
     if (!messengerStore.isConnected) await messengerStore.connect();
     if (!chatStore.isConnected) await chatStore.connect();
 
-    updateId = setInterval(() => {
-        flag.value = !flag.value;
-        console.log("Force update");
-    }, 5000);
+    // updateId = setInterval(() => {
+    //     flag.value = !flag.value;
+    //     console.log("Force update");
+    // }, 5000);
 });
 
 const input = ref("");

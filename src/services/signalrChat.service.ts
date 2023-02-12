@@ -1,6 +1,7 @@
 import { type HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { useAuthStore } from "@/stores/auth.store";
 import type { User, MessageWithoutSender, Message, Chat } from "@/models";
+import { useChatStore } from "@/stores";
 
 export type ChatInfo = {
     otherUser: User;
@@ -164,6 +165,8 @@ export class SignalrChatService {
         for (let i = 0; i < this.chats.length; i++) {
             console.log(i, "username: ", this.chats[i].interlocutor.username, this.chats[i]);
         }
+
+        useChatStore().update_chat();        
     }
 
     public async getChatInfo(chatName: string) {

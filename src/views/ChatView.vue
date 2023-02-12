@@ -18,6 +18,14 @@ watch(route, async (newValue, oldValue) => {
     console.log("After route change: ", chat.value);
 });
 
+watch(chatStore, async (newValue, oldValue) => {
+    flag.value = !flag.value;
+    if(chat.value === null){
+        chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
+        console.debug("load new chat");
+    }
+});
+
 onUpdated(() => {
     console.debug("On page updated");
 });
@@ -33,10 +41,10 @@ onBeforeMount(async () => {
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
     console.log("OnChatMount: ", chat.value);
 
-    updateId = setInterval(() => {
-        flag.value = !flag.value;
-        console.log("Force update");
-    }, 5000);
+    // updateId = setInterval(() => {
+    //     flag.value = !flag.value;
+    //     console.log("Force update");
+    // }, 5000);
 
     sidebarHidden = ref(false);
 });
