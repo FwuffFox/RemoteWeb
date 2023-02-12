@@ -97,7 +97,7 @@ export class SignalrChatService {
             // for(let i = 0; i < this.chats.length; ++i){
             //     console.debug(i, "is", this.chats[i]);
             // }
-            this.chats.sort((a: Chat, b:Chat) => {return ((a.messages[a.messages.length - 1].sentOn< b.messages[b.messages.length - 1].sentOn) ? -1 : 1);});
+            this.chats.sort((a: Chat, b:Chat) => {return ((a.messages[a.messages.length - 1].sentOn< b.messages[b.messages.length - 1].sentOn) ? 1 : -1);});
 
             console.debug("Chats after connect ");
             for(let i = 0; i < this.chats.length; ++i){
