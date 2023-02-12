@@ -3,11 +3,12 @@ import { SignalrChatService } from "@/services/signalrChat.service";
 import type { Chat } from "@/models";
 import { useAuthStore } from "./auth.store";
 
+
 export const useChatStore = defineStore({
     id: "chat",
     state: () => ({
         signal: null as SignalrChatService | null,
-        chats: null as Chat[] | null,
+        update_flag: Boolean(false),
     }),
     getters: {
         isConnected: (state): boolean => {
@@ -18,11 +19,15 @@ export const useChatStore = defineStore({
         },
     },
     actions: {
+        async update_chat(){
+            this.update_flag = !this.update_flag;
+            console.info("UPDATE");
+        },
+
         async connect() {
             console.debug("connect ");
             const signal = await SignalrChatService.init();
             this.signal = signal;
-            this.chats = signal.chats;
             console.debug("ch is: ", this.signal?.chats);
         },
 
