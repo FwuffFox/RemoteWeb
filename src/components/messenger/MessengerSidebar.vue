@@ -7,6 +7,7 @@ import type { User, Chat } from "@/models";
 import { useAuthStore, useChatStore } from "@/stores";
 
 const chatStore = useChatStore();
+const authStore = useAuthStore();
 
 let user: Ref<User>;
 let chats: Ref<Chat[]>;
@@ -23,18 +24,22 @@ onBeforeMount(() => {
         <div class="header">
             <h4>REMOTE</h4>
         </div>
-        <RouterLink class="py-2 px-2 w-100 mb-0 d-flex flex-row justify-content-center h4 text-white orange-hover" to="/">Главный чат</RouterLink>
+        <RouterLink
+            class="py-2 px-2 w-100 mb-0 d-flex flex-row justify-content-center h4 text-white orange-hover"
+            to="/"
+            >Главный чат</RouterLink
+        >
         <div class="overflow-y-auto list-unstyled">
-            <ChatSelectButton v-for="chat in chats" :key="chat.chat_name" :chat="chat"/>
+            <ChatSelectButton v-for="chat in chats" :key="chat.chat_name" :chat="chat" />
         </div>
         <div class="profile">
             <div class="d-flex align-items-center flex-grow-1">
                 <v-avatar class="me-2" size="50" color="blue">
-                    <span>{{user?.username.substring(1, 3).toUpperCase()}}</span>
+                    <span>{{ user?.username.substring(1, 3).toUpperCase() }}</span>
                 </v-avatar>
-                <a v-if:="user">{{ user?.fullName.split(" ")[1] }}</a>
+                <a v-if:="user">{{ user?.fullName }}</a>
             </div>
-            <LogoutButton />
+            <LogoutButton @press="authStore.logout" />
         </div>
     </div>
 </template>

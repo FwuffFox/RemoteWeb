@@ -42,7 +42,7 @@ const isLoading = computed(() => !chatStore.isConnected);
 
 <template>
     <div class="d-block">
-        <main class="app-container">
+        <main class="app-container d-flex vh-100 justify-content-between">
             <v-dialog persistent v-model="isLoading">
                 <v-progress-circular indeterminate color="orange" :size="100" :width="12" />
             </v-dialog>
