@@ -20,7 +20,7 @@ watch(route, async (newValue, oldValue) => {
 
 watch(chatStore, async (newValue, oldValue) => {
     flag.value = !flag.value;
-    if(chat.value === null){
+    if (chat.value === null) {
         chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
         console.debug("load new chat");
     }
@@ -30,7 +30,6 @@ onUpdated(() => {
     console.debug("On page updated");
 });
 
-let updateId: number;
 onBeforeMount(async () => {
     if (!chatStore.isConnected) {
         console.debug("Awaiting connect from ChatView");
@@ -40,11 +39,6 @@ onBeforeMount(async () => {
 
     chat.value = (await chatStore.getChatByUsername(route.params.chatName as string)) as Chat;
     console.log("OnChatMount: ", chat.value);
-
-    // updateId = setInterval(() => {
-    //     flag.value = !flag.value;
-    //     console.log("Force update");
-    // }, 5000);
 
     sidebarHidden = ref(false);
 });
@@ -63,8 +57,6 @@ async function sendMessage() {
 const isLoading = computed(() => !chatStore.isConnected);
 
 let sidebarHidden: Ref<boolean>;
-
-onBeforeUnmount(() => clearInterval(updateId));
 </script>
 
 <template>

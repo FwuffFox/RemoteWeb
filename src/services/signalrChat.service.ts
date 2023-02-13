@@ -162,11 +162,9 @@ export class SignalrChatService {
         this.chats[0] = found;
 
         console.debug("chat after add new message: ");
-        for (let i = 0; i < this.chats.length; i++) {
-            console.log(i, "username: ", this.chats[i].interlocutor.username, this.chats[i]);
-        }
+        console.table(this.chats);
 
-        useChatStore().update_chat();        
+        await useChatStore().update_chat();
     }
 
     public async getChatInfo(chatName: string) {

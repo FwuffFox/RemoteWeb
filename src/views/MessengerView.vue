@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, onBeforeMount, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import TextMessage from "@/components/messenger/TextMessage.vue";
 import MessengerSidebar from "@/components/messenger/MessengerSidebar.vue";
 import { useChatStore, useMessengerStore } from "@/stores";
@@ -11,16 +11,14 @@ const { messages } = storeToRefs(messengerStore);
 
 defineEmits(["click"]);
 
-let updateId: number;
 onBeforeMount(async () => {
     console.log("MessengerView mounted");
     if (!messengerStore.isConnected) await messengerStore.connect();
     if (!chatStore.isConnected) await chatStore.connect();
+});
 
-    // updateId = setInterval(() => {
-    //     flag.value = !flag.value;
-    //     console.log("Force update");
-    // }, 5000);
+watch(chatStore, async (newValue, oldValue) => {
+    flag.value = !flag.value;
 });
 
 const input = ref("");
@@ -35,10 +33,6 @@ async function sendMessage() {
 const isLoading = computed(() => !messengerStore.isConnected);
 
 const sidebarHidden = ref(false);
-
-onBeforeUnmount(() => {
-    clearInterval(updateId);
-});
 </script>
 
 <template>
