@@ -1,0 +1,22 @@
+@use "./colors.scss" as colors;
+@use "./base.scss" as base;
+@import "~bootstrap/scss/bootstrap";
+
+#app {
+    font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+}
+
+.orange-hover {
+    color: colors.$primary-color;
+    transition: 0.4s;
+}
+
+@media (hover: hover) {
+    .orange-hover:hover {
+        background-color: colors.$link-highlight-color;
+    }
+}
